@@ -1,0 +1,601 @@
+/*
+Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/CascadeStyleSheet.css to edit this template
+*/
+/* 
+    Created on : 27 nov. 2023, 15:42:53
+    Author     : Patrick
+*/
+#btn-estudiante{
+    border-radius: 3px;
+    background-color: #00ae86;
+    color: white;
+    font-weight: 600;
+    border: 2px solid black;
+    box-shadow: 5px 5px 0px 0px rgba(0,0,0,0.75);
+    width: 200px;
+    height: 50px;
+}
+#btn-apoderados{
+   
+    border-radius: 3px;
+    margin-left: -5px;
+    font-weight: 600;
+    border: 2px solid black;
+    box-shadow: 5px 5px 0px 0px rgba(0,0,0,0.75);
+    width: 200px;
+    height: 50px;
+}
+#btn-vacantes{
+    border-radius: 3px;
+    margin-left: -7px;
+    font-weight: 600;
+    border: 2px solid black;
+    box-shadow: 5px 5px 0px 0px rgba(0,0,0,0.75);
+    width: 200px;
+    height: 50px;
+}
+#btn-matriculas{
+    border-radius: 3px;
+    margin-left: -9px;
+    font-weight: 600;
+    border: 2px solid black;
+    box-shadow: 5px 5px 0px 0px rgba(0,0,0,0.75);
+    width: 200px;
+    height: 50px;
+}
+#btn-utiles{
+    border-radius: 3px;
+    margin-left: -11px;
+    font-weight: 600;
+    border: 2px solid black;
+    box-shadow: 5px 5px 0px 0px rgba(0,0,0,0.75);
+    width: 200px;
+    height: 50px;
+}
+#btn-pagos{
+    border-radius: 3px;
+    margin-left: -13px;
+    font-weight: 600;
+    border: 2px solid black;
+    box-shadow: 5px 5px 0px 0px rgba(0,0,0,0.75);
+    width: 200px;
+    height: 50px;
+}
+
+.label-filtros{
+  ueta{
+    color: black;
+}  font-weight: bold;
+}
+#etiqueta{
+    color: black;
+}
+
+#campo-selecNivel{
+    border-radius: 3px;
+    border: 2px solid black;
+    box-shadow: 5px 5px 0px 0px rgba(0,0,0,0.75);
+    width: 350px;
+}
+
+#campo-selecGrado{
+    border-radius: 3px;
+    border: 2px solid black;
+    box-shadow: 5px 5px 0px 0px rgba(0,0,0,0.75);
+    width: 350px;
+}
+
+.label-porGenero{
+    font-weight: bold;
+}
+
+#campo-selecGenero{
+    border-radius: 3px;
+    border: 2px solid black;
+    box-shadow: 5px 5px 0px 0px rgba(0,0,0,0.75);
+    width: 350px;
+}
+
+#icon-agregar{
+    margin-right: 10px;
+}
+ <!-- Generar reporte -->
+#btn-generar{
+    font-size: 14px;
+    font-weight: 600;
+    color: black;
+    width: 120px;
+    height: 50px;
+    border: 2px solid white;
+    border-radius: 3px;
+    background-color: #f2d12e;
+    box-shadow: 5px 5px 0px 0px #555555;
+}
+
+
+
+
+
+reporte-matricula
+
+
+#btn-listaEst{
+    border-radius: 3px;
+    
+    font-weight: 600;
+    border: 2px solid black;
+    box-shadow: 5px 5px 0px 0px rgba(0,0,0,0.75);
+    width: 200px;
+    height: 50px;
+    
+}
+#btn-listaApo{
+    border-radius: 3px;
+    margin-left: -5px;
+    background-color: #00ae86;
+    color: white;
+    font-weight: 600;
+    border: 2px solid black;
+    box-shadow: 5px 5px 0px 0px rgba(0,0,0,0.75);
+    width: 200px;
+    height: 50px;
+}
+.label-dni{
+    font-weight: bold;
+}
+#campo-buscar{
+    border-radius: 3px;
+    border: 2px solid black;
+    box-shadow: 5px 5px 0px 0px rgba(0,0,0,0.75);
+    width: 350px;
+}
+#btn-buscar{
+    border-radius: 3px;
+    background-color: #00ae86;
+    color: white;
+    font-weight: 600;
+    border: 2px solid black;
+    box-shadow: 5px 5px 0px 0px rgba(0,0,0,0.75);
+    width: 130px;
+    display: flex;
+    align-items: center;
+}
+#icon-buscar{
+    margin-right: 10px;
+}
+#btn-agregarApo{
+    border-radius: 3px;
+    background-color: #00ae86;
+    color: white;
+    font-weight: 600;
+    border: 2px solid black;
+    box-shadow: 5px 5px 0px 0px rgba(0,0,0,0.75);
+    display: flex;
+    align-items: center;
+    margin-top: 3px;
+    
+}
+#icon-agregar{
+    margin-right: 10px;
+}
+
+.table-container{
+    border-radius: 3px;
+    border:2px solid black;
+    padding-right: 30px;
+    box-shadow: 5px 5px 0px 0px rgba(0,0,0,0.75);
+}
+#tabla{
+    margin: 15px 15px;
+    
+}
+#tabla th{
+    padding: 20px 25px;
+    background-color: #00ae86;
+    color: white;
+    font-weight: 700;
+
+}
+#tabla td{
+    padding: 15px;
+    background-color: #444444;
+    color: white;
+    font-size: 14px;
+    font-weight: 500;
+    text-align: center;
+
+}
+.icono-accion{
+    text-decoration: none;
+}
+
+#contenedor-pag a{
+    border: 0px;
+}
+#pag1{
+    border:1px solid black;
+    box-shadow: 5px 5px 0px 0px rgba(0,0,0,0.75);
+}
+
+
+
+reporte vacantes
+#btn-estudiante{
+    border-radius: 3px;
+    font-weight: 600;
+    border: 2px solid black;
+    box-shadow: 5px 5px 0px 0px rgba(0,0,0,0.75);
+    width: 200px;
+    height: 50px;
+}
+#btn-apoderados{
+   
+    border-radius: 3px;
+    margin-left: -5px;
+    font-weight: 600;
+    border: 2px solid black;
+    box-shadow: 5px 5px 0px 0px rgba(0,0,0,0.75);
+    width: 200px;
+    height: 50px;
+}
+#btn-vacantes{
+    border-radius: 3px;
+    margin-left: -7px;
+    background-color: #00ae86;
+    color: white;
+    font-weight: 600;
+    border: 2px solid black;
+    box-shadow: 5px 5px 0px 0px rgba(0,0,0,0.75);
+    width: 200px;
+    height: 50px;
+}
+#btn-matriculas{
+    border-radius: 3px;
+    margin-left: -9px;
+    font-weight: 600;
+    border: 2px solid black;
+    box-shadow: 5px 5px 0px 0px rgba(0,0,0,0.75);
+    width: 200px;
+    height: 50px;
+}
+#btn-utiles{
+    border-radius: 3px;
+    margin-left: -11px;
+    font-weight: 600;
+    border: 2px solid black;
+    box-shadow: 5px 5px 0px 0px rgba(0,0,0,0.75);
+    width: 200px;
+    height: 50px;
+}
+#btn-pagos{
+    border-radius: 3px;
+    margin-left: -13px;
+    font-weight: 600;
+    border: 2px solid black;
+    box-shadow: 5px 5px 0px 0px rgba(0,0,0,0.75);
+    width: 200px;
+    height: 50px;
+}
+
+.label-filtros{
+  ueta{
+    color: black;
+}  font-weight: bold;
+}
+#etiqueta{
+    color: black;
+}
+
+
+
+#campo-selecNivel{
+    border-radius: 3px;
+    border: 2px solid black;
+    box-shadow: 5px 5px 0px 0px rgba(0,0,0,0.75);
+    width: 350px;
+}
+
+
+
+#icon-agregar{
+    margin-right: 10px;
+}
+ <!-- Generar reporte -->
+#btn-generar{
+    font-size: 14px;
+    font-weight: 600;
+    color: black;
+    width: 120px;
+    height: 50px;
+    border: 2px solid white;
+    border-radius: 3px;
+    background-color: #f2d12e;
+    box-shadow: 5px 5px 0px 0px #555555;
+}
+
+reporte-matricula
+#btn-estudiante{
+    border-radius: 3px;
+    font-weight: 600;
+    border: 2px solid black;
+    box-shadow: 5px 5px 0px 0px rgba(0,0,0,0.75);
+    width: 200px;
+    height: 50px;
+}
+#btn-apoderados{
+   
+    border-radius: 3px;
+    margin-left: -5px;
+    font-weight: 600;
+    border: 2px solid black;
+    box-shadow: 5px 5px 0px 0px rgba(0,0,0,0.75);
+    width: 200px;
+    height: 50px;
+}
+#btn-vacantes{
+    border-radius: 3px;
+    margin-left: -7px;
+   
+    font-weight: 600;
+    border: 2px solid black;
+    box-shadow: 5px 5px 0px 0px rgba(0,0,0,0.75);
+    width: 200px;
+    height: 50px;
+}
+#btn-matriculas{
+    border-radius: 3px;
+    margin-left: -9px;
+    background-color: #00ae86;
+    color: white;
+    font-weight: 600;
+    border: 2px solid black;
+    box-shadow: 5px 5px 0px 0px rgba(0,0,0,0.75);
+    width: 200px;
+    height: 50px;
+}
+#btn-utiles{
+    border-radius: 3px;
+    margin-left: -11px;
+    font-weight: 600;
+    border: 2px solid black;
+    box-shadow: 5px 5px 0px 0px rgba(0,0,0,0.75);
+    width: 200px;
+    height: 50px;
+}
+#btn-pagos{
+    border-radius: 3px;
+    margin-left: -13px;
+    font-weight: 600;
+    border: 2px solid black;
+    box-shadow: 5px 5px 0px 0px rgba(0,0,0,0.75);
+    width: 200px;
+    height: 50px;
+}
+.label-filtros{
+  ueta{
+    color: black;
+}  font-weight: bold;
+}
+#etiqueta{
+    color: black;
+}
+
+#campo-selecNivel{
+    border-radius: 3px;
+    border: 2px solid black;
+    box-shadow: 5px 5px 0px 0px rgba(0,0,0,0.75);
+    width: 350px;
+}
+
+#campo-selecGrado{
+    border-radius: 3px;
+    border: 2px solid black;
+    box-shadow: 5px 5px 0px 0px rgba(0,0,0,0.75);
+    width: 350px;
+}
+#campo-selecEstado{
+    border-radius: 3px;
+    border: 2px solid black;
+    box-shadow: 5px 5px 0px 0px rgba(0,0,0,0.75);
+    width: 350px;
+}
+#icon-agregar{
+    margin-right: 10px;
+}
+#btn-generar{
+    font-size: 14px;
+    font-weight: 600;
+    color: black;
+    width: 120px;
+    height: 50px;
+    border: 2px solid white;
+    border-radius: 3px;
+    background-color: #f2d12e;
+    box-shadow: 5px 5px 0px 0px #555555;
+}
+
+   reporte UTILES 
+
+#btn-estudiante{
+    border-radius: 3px;
+    font-weight: 600;
+    border: 2px solid black;
+    box-shadow: 5px 5px 0px 0px rgba(0,0,0,0.75);
+    width: 200px;
+    height: 50px;
+}
+#btn-apoderados{
+   
+    border-radius: 3px;
+    margin-left: -5px;
+    font-weight: 600;
+    border: 2px solid black;
+    box-shadow: 5px 5px 0px 0px rgba(0,0,0,0.75);
+    width: 200px;
+    height: 50px;
+}
+#btn-vacantes{
+    border-radius: 3px;
+    margin-left: -7px;
+   
+    font-weight: 600;
+    border: 2px solid black;
+    box-shadow: 5px 5px 0px 0px rgba(0,0,0,0.75);
+    width: 200px;
+    height: 50px;
+}
+#btn-matriculas{
+    border-radius: 3px;
+    margin-left: -9px;
+  
+    font-weight: 600;
+    border: 2px solid black;
+    box-shadow: 5px 5px 0px 0px rgba(0,0,0,0.75);
+    width: 200px;
+    height: 50px;
+}
+#btn-utiles{
+    border-radius: 3px;
+    margin-left: -11px;
+    background-color: #00ae86;
+    color: white;
+    font-weight: 600;
+    border: 2px solid black;
+    box-shadow: 5px 5px 0px 0px rgba(0,0,0,0.75);
+    width: 200px;
+    height: 50px;
+}
+#btn-pagos{
+    border-radius: 3px;
+    margin-left: -13px;
+    font-weight: 600;
+    border: 2px solid black;
+    box-shadow: 5px 5px 0px 0px rgba(0,0,0,0.75);
+    width: 200px;
+    height: 50px;
+}
+
+.label-filtros{
+  ueta{
+    color: black;
+}  font-weight: bold;
+}
+#etiqueta{
+    color: black;
+}
+
+
+
+
+#campo-selecNivel{
+    border-radius: 3px;
+    border: 2px solid black;
+    box-shadow: 5px 5px 0px 0px rgba(0,0,0,0.75);
+    width: 350px;
+}
+
+#campo-selecGrado{
+    border-radius: 3px;
+    border: 2px solid black;
+    box-shadow: 5px 5px 0px 0px rgba(0,0,0,0.75);
+    width: 350px;
+}
+
+
+#icon-agregar{
+    margin-right: 10px;
+}
+ <!-- Generar reporte -->
+#btn-generar{
+    font-size: 14px;
+    font-weight: 600;
+    color: black;
+    width: 120px;
+    height: 50px;
+    border: 2px solid white;
+    border-radius: 3px;
+    background-color: #f2d12e;
+    box-shadow: 5px 5px 0px 0px #555555;
+}
+
+REPORTE-PAGOS
+
+   /*Para estudiante */ 
+#btn-estudiante{
+    border-radius: 3px;
+    font-weight: 600;
+    border: 2px solid black;
+    box-shadow: 5px 5px 0px 0px rgba(0,0,0,0.75);
+    width: 200px;
+    height: 50px;
+}
+#btn-apoderados{
+   
+    border-radius: 3px;
+    margin-left: -5px;
+    font-weight: 600;
+    border: 2px solid black;
+    box-shadow: 5px 5px 0px 0px rgba(0,0,0,0.75);
+    width: 200px;
+    height: 50px;
+}
+#btn-vacantes{
+    border-radius: 3px;
+    margin-left: -7px;
+    font-weight: 600;
+    border: 2px solid black;
+    box-shadow: 5px 5px 0px 0px rgba(0,0,0,0.75);
+    width: 200px;
+    height: 50px;
+}
+#btn-matriculas{
+    border-radius: 3px;
+    margin-left: -9px;
+    font-weight: 600;
+    border: 2px solid black;
+    box-shadow: 5px 5px 0px 0px rgba(0,0,0,0.75);
+    width: 200px;
+    height: 50px;
+}
+#btn-utiles{
+    border-radius: 3px;
+    margin-left: -11px;
+    font-weight: 600;
+    border: 2px solid black;
+    box-shadow: 5px 5px 0px 0px rgba(0,0,0,0.75);
+    width: 200px;
+    height: 50px;
+}
+#btn-pagos{
+    border-radius: 3px;
+    margin-left: -13px;
+    background-color: #00ae86;
+    color: white;
+    font-weight: 600;
+    border: 2px solid black;
+    box-shadow: 5px 5px 0px 0px rgba(0,0,0,0.75);
+    width: 200px;
+    height: 50px;
+}
+#campo-selecPago{
+    border-radius: 3px;
+    border: 2px solid black;
+    box-shadow: 5px 5px 0px 0px rgba(0,0,0,0.75);
+    width: 350px;
+}
+#icon-agregar{
+    margin-right: 10px;
+}
+#btn-generar{
+    font-size: 14px;
+    font-weight: 600;
+    color: black;
+    width: 120px;
+    height: 50px;
+    border: 2px solid white;
+    border-radius: 3px;
+    background-color: #f2d12e;
+    box-shadow: 5px 5px 0px 0px #555555;
+}
+

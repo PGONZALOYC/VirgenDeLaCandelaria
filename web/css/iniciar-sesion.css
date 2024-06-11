@@ -1,0 +1,245 @@
+*{
+    padding: 0;
+    margin: 0;
+}
+.insignia{
+    position: absolute;
+    opacity: .15;
+    margin-top: 20px;
+    margin-left: 400px;
+    z-index: 1;
+}
+.contenedor{
+    position: absolute;
+    z-index: 2;
+}
+.administrador img{
+    position: relative;
+    z-index: 3;
+    margin-top: 5px;
+    margin-left: 480px;
+    float: block;
+}
+.bienvenido{
+    position: absolute;
+    float: left;
+    z-index: 3;
+    margin-top: -150px;
+    margin-left: 700px;
+    font-weight: bold;
+    font-family: verdana;
+}
+.usuario{
+    position:absolute;
+    float: left;
+    z-index: 3;
+    margin-top: -120px;
+    margin-left: 690px;
+    width: 500px;
+    font-weight: bold;
+    font-family: verdana;
+}
+
+
+.vacantes-contenedor{
+    width: 390px;
+    height: 220px;
+    background-color: yellow; 
+    margin-top: -25px;
+    margin-left: 20px;
+    float: left;
+
+}
+.fondo-vacantes{
+    margin-left: 20px;
+    margin-top: 20px;
+    width: 350px;
+    height: 180px;
+    background-color: red;
+    float: left;
+   position: absolute;
+    border-radius: 15px;
+    box-shadow: 0 0 15px 0 gray;
+}
+.fondo-vacantes img{
+    position: absolute;
+}
+.titulo-vacante{
+    position:absolute;
+    float: left;
+    z-index: 5;
+    margin-top: 95px;
+    margin-left: 230px;
+    font-weight: bold;
+    font-family: verdana;
+}
+
+.estudiantes-contenedor{
+    float: left;
+    width: 390px;
+    height: 220px;
+    background-color: yellow; 
+    margin-top: -25px;
+    margin-left: 30px;
+
+}
+.fondo-estudiantes{
+    margin-left: 20px;
+    margin-top: 20px;
+    width: 350px;
+    height: 180px;
+    background-color: red;
+    float: left;
+   position: absolute;
+    border-radius: 15px;
+    box-shadow: 0 0 15px 0 gray;
+}
+.fondo-estudiantes img{
+    position: absolute;
+}
+.titulo-estudiantes{
+    position:absolute;
+    float: left;
+    z-index: 5;
+    margin-top: 95px;
+    margin-left: 230px;
+    font-weight: bold;
+    font-family: verdana;
+}
+
+.matricula-contenedor{
+    float: left;
+    width: 390px;
+    height: 220px;
+    background-color: yellow; 
+    margin-top: -25px;
+    margin-left: 25px;
+
+}
+.fondo-matricula{
+    margin-left: 20px;
+    margin-top: 20px;
+    width: 350px;
+    height: 180px;
+    background-color: red;
+    float: left;
+   position: absolute;
+    border-radius: 15px;
+    box-shadow: 0 0 15px 0 gray;
+}
+.fondo-matricula img{
+    position: absolute;
+}
+.titulo-matricula{
+    position:absolute;
+    float: left;
+    z-index: 5;
+    margin-top: 95px;
+    margin-left: 230px;
+    font-weight: bold;
+    font-family: verdana;
+}
+.reservas-contenedor{
+    width: 390px;
+    height: 220px;
+    background-color: yellow; 
+    margin-top: 25px;
+    margin-left: 20px;
+    margin-right: 10px;
+    float: left;
+
+}
+.fondo-reservas{
+    margin-left: 20px;
+    margin-top: 20px;
+    width: 350px;
+    height: 180px;
+    background-color: red;
+    float: left;
+    position: absolute;
+    border-radius: 15px;
+    box-shadow: 0 0 15px 0 gray;
+}
+.fondo-reservas img{
+    position: absolute;
+}
+.titulo-reservas{
+    position:absolute;
+    float: left;
+    z-index: 5;
+    margin-top: 95px;
+    margin-left: 230px;
+    font-weight: bold;
+    font-family: verdana;
+}
+
+.utiles-contenedor{
+    width: 390px;
+    height: 220px;
+    background-color: yellow; 
+    margin-top: 25px;
+    margin-left: 20px;
+    margin-right: 5px;
+    float: left;
+
+}
+.fondo-utiles{
+    margin-left: 20px;
+    margin-top: 20px;
+    width: 350px;
+    height: 180px;
+    background-color: red;
+    float: left;
+    position: absolute;
+    border-radius: 15px;
+    box-shadow: 0 0 15px 0 gray;
+}
+.fondo-utiles img{
+    position: absolute;
+}
+.titulo-utiles{
+    position:absolute;
+    float: left;
+    z-index: 5;
+    margin-top: 95px;
+    margin-left: 230px;
+    font-weight: bold;
+    font-family: verdana;
+}
+
+.reportes-contenedor{
+    width: 390px;
+    height: 220px;
+    background-color: yellow; 
+    margin-top: 25px;
+    margin-left: 20px;
+    float: left;
+
+}
+.fondo-reportes{
+    margin-left: 20px;
+    margin-top: 20px;
+    width: 350px;
+    height: 180px;
+    background-color: red;
+    float: left;
+    position: absolute;
+    border-radius: 15px;
+    box-shadow: 0 0 15px 0 gray;
+}
+.fondo-reportes img{
+    position: absolute;
+}
+.titulo-reportes{
+    position:absolute;
+    float: left;
+    z-index: 5;
+    margin-top: 95px;
+    margin-left: 230px;
+    font-weight: bold;
+    font-family: verdana;
+}
+
+
+
+

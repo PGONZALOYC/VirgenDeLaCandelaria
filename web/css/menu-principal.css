@@ -1,0 +1,31 @@
+*{
+    padding: 0;
+    margin: 0;
+}
+.main-container{
+    background-image: url(../img/insignia.png);
+    background-repeat: no-repeat;
+    background-size: cover;
+    position: absolute;
+    top:0;
+    margin-left: auto;
+    margin-right: auto;
+    left: 0;
+    right: 0;
+    text-align: center;
+}
+.img-fluid{
+    max-width: 250px;
+}
+.main-options{
+    background-color: rgba(255,255,255,0.8);
+    box-shadow: 0 0 15px 0 gray;
+    border-radius: 15px;
+    width: 470px;
+}
+
+a:hover{
+    background-color: rgba(155,155,155,0.8);
+    border-radius:15px;
+    color:white;
+}

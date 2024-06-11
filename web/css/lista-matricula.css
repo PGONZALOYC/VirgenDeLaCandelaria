@@ -1,0 +1,84 @@
+/*
+Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/CascadeStyleSheet.css to edit this template
+*/
+/* 
+    Created on : 23 nov. 2023, 12:51:26
+    Author     : Patrick
+*/
+.label-dni{
+    font-weight: bold;
+}
+#campo-buscar{
+    border-radius: 3px;
+    border: 2px solid black;
+    box-shadow: 5px 5px 0px 0px rgba(0,0,0,0.75);
+    width: 350px;
+}
+#btn-buscar{
+    border-radius: 3px;
+    background-color: #00ae86;
+    color: white;
+    font-weight: 600;
+    border: 2px solid black;
+    box-shadow: 5px 5px 0px 0px rgba(0,0,0,0.75);
+    width: 130px;
+    display: flex;
+    align-items: center;
+}
+#icon-buscar{
+    margin-right: 10px;
+}
+#btn-agregarEst{
+    border-radius: 3px;
+    background-color: #00ae86;
+    color: white;
+    font-weight: 600;
+    border: 2px solid black;
+    box-shadow: 5px 5px 0px 0px rgba(0,0,0,0.75);
+    display: flex;
+    align-items: center;
+    margin-top: 3px;
+    
+}
+#icon-agregar{
+    margin-right: 10px;
+}
+
+#table-container{
+    border-radius: 3px;
+    border:2px solid black;
+    padding-right: 30px;
+    box-shadow: 5px 5px 0px 0px rgba(0,0,0,0.75);
+}
+#tabla{
+    margin: 15px 15px;
+    
+}
+#tabla th{
+    padding: 20px 25px;
+    background-color: #00ae86;
+    color: white;
+    font-weight: 700;
+    text-align: center;
+}
+#tabla td{
+    padding: 15px;
+    background-color: #444444;
+    color: white;
+    font-size: 14px;
+    font-weight: 500;
+    text-align: center;
+}
+.icono-accion{
+    text-decoration: none;
+}
+.status{
+    padding: .4rem 0;
+    border-radius: 2rem; 
+}
+.status.activa{
+    background-color: #86e49d;
+    color:#006b21;
+}
+

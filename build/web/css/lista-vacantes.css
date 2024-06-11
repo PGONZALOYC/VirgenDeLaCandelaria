@@ -1,0 +1,264 @@
+
+#seleccionar-nivel{
+    border-radius: 3px;
+    border: 2px solid black;
+    box-shadow: 5px 5px 0px 0px rgba(0,0,0,0.75);
+    width: 350px;
+    margin-right: 20px;
+}
+#seleccionar-grado{
+    border-radius: 3px;
+    border: 2px solid black;
+    box-shadow: 5px 5px 0px 0px rgba(0,0,0,0.75);
+    width: 350px;
+    margin-right: 20px;
+}
+#btm-filtar{
+    border-radius: 3px;
+    background-color: #00ae86;
+    color: white;
+    font-weight: 600;
+    border: 2px solid black;
+    box-shadow: 5px 5px 0px 0px rgba(0,0,0,0.75);
+    width: 130px;
+    display: flex;
+    align-items: center;
+}
+#icon-buscar{
+    margin-right: 10px;
+}
+#table-container{
+    border-radius: 3px;
+    border:2px solid black;
+    padding-right: 30px;
+    box-shadow: 5px 5px 0px 0px rgba(0,0,0,0.75);
+}
+#tabla{
+    margin: 15px 15px;
+    
+}
+#tabla th{
+    padding: 20px 25px;
+    background-color: #00ae86;
+    color: white;
+    font-weight: 700;
+    text-align: center;
+}
+#tabla td{
+    padding: 15px;
+    background-color: #444444;
+    color: white;
+    font-size: 14px;
+    font-weight: 500;
+    text-align: center;
+}
+.icono-accion{
+    text-decoration: none;
+}
+
+/*------TRANSICIONES QUE SE APLICARAN A TODOS LOS MODALES EXISTENTES-------*/
+.modal.fade.show {
+    opacity: 1;
+    transition: opacity 0.3s ease-in-out;
+}
+  /* Estilo para la transición de salida del modal */
+.modal.fade {
+    opacity: 0;
+    transition: opacity 0.3s 
+}
+.modal-title{
+    color: white;
+    font-weight: bold;
+}
+#modal-contenido{
+    background-color: #222222;
+    border: 3px solid black;
+    box-shadow:5px 5px 0px 0px rgba(0,0,0,0.75);
+    
+}
+/*-----------Secciones----------*/
+.Secciones{
+    display: flex;
+    justify-content: center;
+}
+/*Botones de la seccion matricula*/
+#btn-est{
+    border-radius: 4px;
+    background-color: #f2d12e;
+    border: 3px solid black;
+    box-shadow: 5px 5px 0px 0px rgba(0,0,0,0.75);
+    width: 60px;
+    height: 45px;
+
+}
+#btn-apo-tit{
+    border-radius: 4px;
+    background-color: white;
+    border: 3px solid black;
+    box-shadow: 5px 5px 0px 0px rgba(0,0,0,0.75);
+    width: 60px;
+    height: 45px;
+    color: black;
+    font-weight: 500;
+}
+#btn-doc{
+    border-radius: 4px;
+    background-color: white;
+    border: 3px solid black;
+    box-shadow: 5px 5px 0px 0px rgba(0,0,0,0.75);
+    width: 60px;
+    height: 45px;
+    color: black;
+    font-weight: 500;
+}
+
+#btn-est2{
+    border-radius: 4px;
+    background-color: white;
+    border: 3px solid black;
+    box-shadow: 5px 5px 0px 0px rgba(0,0,0,0.75);
+    width: 60px;
+    height: 45px;
+    color: black;
+    font-weight: 500;
+
+}
+#btn-apo-tit2{
+    border-radius: 4px;
+    background-color: #f2d12e;
+    border: 3px solid black;
+    box-shadow: 5px 5px 0px 0px rgba(0,0,0,0.75);
+    width: 60px;
+    height: 45px;  
+    
+}
+#btn-doc2{
+    border-radius: 4px;
+    background-color: #f2d12e;
+    border: 3px solid black;
+    box-shadow: 5px 5px 0px 0px rgba(0,0,0,0.75);
+    width: 60px;
+    height: 45px;
+    color: black;
+    font-weight: 500;
+}
+
+/*Campo DNI y btn buscar*/
+.label-dni{
+    font-weight: bold;
+    color: white;
+}
+#campo-buscar{
+    box-shadow: 5px 5px 0px 0px #555555;
+    width: 240px;
+}
+#btn-buscar{
+    border-radius: 3px;
+    background-color: #f2d12e;
+    color: black;
+    font-weight: 600;
+    border: 2px solid black;
+    box-shadow:5px 5px 0px 0px rgba(0,0,0,0.75);
+    width: 130px;
+    
+    
+}
+/*Informacion del est*/
+.contenedor-info-est{
+    padding: 20px 20px;
+    
+    border-radius: 15px;
+    border: 2px solid black;
+    box-shadow:5px 5px 0px 0px rgba(0,0,0,0.75);
+}
+.label-info{
+    font-weight: bold;
+    color: white;
+}
+
+/*Modal Apoderado titular*/
+.table-container{
+    border-radius: 3px;
+    border:2px solid black;
+    padding: 0px 20px;
+    box-shadow: 5px 5px 0px 0px rgba(0,0,0,0.75);
+    background-color: white;
+}
+#tabla{
+    margin: 15px 0px;
+    
+}
+#tabla th{
+    padding: 20px;
+    text-align: center;
+    background-color: #424242;
+    color: white;
+    font-weight: 700;
+
+}
+#tabla td{
+    padding: 15px;
+    background-color: #616161;
+    color: white;
+    font-size: 14px;
+    font-weight: 500;
+    text-align: center;
+
+}
+
+/*Modal documentos*/
+.label-doc{
+    font-weight: bold;
+    color: white;
+}
+#nombreDocumento{
+    width: 50%;
+    box-sizing: border-box;
+    height: 33px;
+    border-radius: 3px;
+    border: 2px solid white;
+    background-color: #222222;
+    box-shadow: 5px 5px 0px 0px #555555;
+}
+#btn-importar{
+    border: 2px solid black;
+    color: black;
+    font-weight: 500;
+    background-color: white;
+    box-shadow:5px 5px 0px 0px rgba(0,0,0,0.75);
+}
+
+#seleccionar-nivel1{
+    box-shadow:5px 5px 0px 0px rgba(0,0,0,0.75);
+    width: 250px;
+}
+#seleccionar-grado1{
+    box-shadow:5px 5px 0px 0px rgba(0,0,0,0.75);
+    width: 250px;
+}
+.contenedor-grado{
+    margin-left: 60px;
+}
+
+#contenedor-info-est{
+    padding: 20px 20px;
+
+    border-radius: 15px;
+    border: 2px solid black;
+    box-shadow:5px 5px 0px 0px rgba(0,0,0,0.75);
+}
+#btn-grabar{
+    border-radius: 3px;
+    background-color: #f2d12e;
+    color: black;
+    font-weight: 600;
+    border: 2px solid black;
+    box-shadow:5px 5px 0px 0px rgba(0,0,0,0.75);
+    width: 130px;
+    justify-content: center;
+    margin-top: 180px;
+
+    width: 200px;
+    height: 50px;
+
+}

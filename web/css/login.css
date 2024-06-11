@@ -1,0 +1,9 @@
+body{
+    background-image: url(../img/login-background.jpg);
+    background-repeat: no-repeat;
+    background-size: cover;
+    position:relative;
+}
+.fondo-opaco{
+    background-color: rgba(255,255,255,0.7);
+}
