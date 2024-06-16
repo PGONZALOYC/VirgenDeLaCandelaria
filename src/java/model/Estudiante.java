@@ -126,7 +126,41 @@ public class Estudiante {
         this.Distrito = Distrito;
     }
 
+    // Método de validación de DNI
+    public boolean esDniValido(String dni) {
+        return dni != null && dni.matches("\\d{8}");
+    }
+
+    // Método de validación de ApPaterno 
+    public boolean esApPaternoValido(String apPaterno) {
+        return apPaterno != null && apPaterno.matches("[A-Za-zÁÉÍÓÚáéíóúñÑ ]+") && apPaterno.length() <= 20;
+    }
+
+    // Método de validación de ApMaterno 
+    public boolean esApMaternoValido(String apMaterno) {
+        return apMaterno != null && apMaterno.matches("[A-Za-zÁÉÍÓÚáéíóúñÑ ]+") && apMaterno.length() <= 20;
+    }
+
+    // Método de validación de Nombres 
+    public boolean esNombresValido(String nombres) {
+        return nombres != null && nombres.matches("[A-Za-zÁÉÍÓÚáéíóúñÑ ]+") && nombres.length() <= 50;
+    }
+    
     public void agregarEstudiante(Estudiante estudiante) {
+        if (!esDniValido(estudiante.getDni())) {
+            throw new IllegalArgumentException("El DNI debe contener exactamente 8 dígitos.");
+        }
+
+        if (!esApPaternoValido(estudiante.getApMaterno())) {
+            throw new IllegalArgumentException("El apellido paterno no es válido.");
+        }
+        if (!esApMaternoValido(estudiante.getApMaterno())) {
+            throw new IllegalArgumentException("El apellido materno no es válido.");
+        }
+        if (!esNombresValido(estudiante.getNombres())) {
+            throw new IllegalArgumentException("El nombre no es válido.");
+        }
+        
         try {
             String sql = "INSERT INTO Estudiante (Dni, Ap_Paterno, Ap_Materno, Nombres, Direccion, Departamento, Distrito, Genero, Fecha_Nac) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
             try (PreparedStatement statement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
