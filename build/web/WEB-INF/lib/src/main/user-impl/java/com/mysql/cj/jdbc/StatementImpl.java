@@ -366,8 +366,7 @@ public class StatementImpl implements JdbcStatement {
      */
     protected boolean isNonResultSetProducingQuery(String sql) {
         QueryReturnType queryReturnType = QueryInfo.getQueryReturnType(sql, this.session.getServerSession().isNoBackslashEscapesSet());
-        return queryReturnType == QueryReturnType.DOES_NOT_PRODUCE_RESULT_SET || queryReturnType == QueryReturnType.MAY_PRODUCE_RESULT_SET
-                || queryReturnType == QueryReturnType.NONE;
+        return queryReturnType == QueryReturnType.DOES_NOT_PRODUCE_RESULT_SET || queryReturnType == QueryReturnType.MAY_PRODUCE_RESULT_SET;
     }
 
     /**
@@ -639,7 +638,7 @@ public class StatementImpl implements JdbcStatement {
     }
 
     @Override
-    public CancelQueryTask startQueryTimer(Query stmtToCancel, long timeout) {
+    public CancelQueryTask startQueryTimer(Query stmtToCancel, int timeout) {
         return this.query.startQueryTimer(stmtToCancel, timeout);
     }
 
@@ -664,8 +663,6 @@ public class StatementImpl implements JdbcStatement {
             resetCancelledState();
 
             implicitlyCloseAllOpenResults();
-
-            clearWarnings();
 
             if (sql.charAt(0) == '/') {
                 if (sql.startsWith(PING_MARKER)) {
@@ -820,7 +817,7 @@ public class StatementImpl implements JdbcStatement {
             }
 
             // we timeout the entire batch, not individual statements
-            long individualStatementTimeout = getTimeoutInMillis();
+            int individualStatementTimeout = getTimeoutInMillis();
             setTimeoutInMillis(0);
 
             CancelQueryTask timeoutTask = null;
@@ -829,8 +826,6 @@ public class StatementImpl implements JdbcStatement {
                 resetCancelledState();
 
                 statementBegins();
-
-                clearWarnings();
 
                 try {
                     this.retrieveGeneratedKeys = true; // The JDBC spec doesn't forbid this, but doesn't provide for it either...we do..
@@ -952,7 +947,7 @@ public class StatementImpl implements JdbcStatement {
      * @throws SQLException
      *             if a database access error occurs or this method is called on a closed PreparedStatement
      */
-    private long[] executeBatchUsingMultiQueries(boolean multiQueriesEnabled, int nbrCommands, long individualStatementTimeout) throws SQLException {
+    private long[] executeBatchUsingMultiQueries(boolean multiQueriesEnabled, int nbrCommands, int individualStatementTimeout) throws SQLException {
         JdbcConnection locallyScopedConn = checkClosed();
 
         synchronized (locallyScopedConn.getConnectionMutex()) {
@@ -1121,8 +1116,6 @@ public class StatementImpl implements JdbcStatement {
 
             implicitlyCloseAllOpenResults();
 
-            clearWarnings();
-
             if (sql.charAt(0) == '/') {
                 if (sql.startsWith(PING_MARKER)) {
                     doPingInstead();
@@ -1260,8 +1253,6 @@ public class StatementImpl implements JdbcStatement {
             checkNullOrEmptyQuery(sql);
 
             resetCancelledState();
-
-            clearWarnings();
 
             char firstStatementChar = QueryInfo.firstCharOfStatementUc(sql, this.session.getServerSession().isNoBackslashEscapesSet());
             if (!isNonResultSetProducingQuery(sql)) {
@@ -1614,7 +1605,7 @@ public class StatementImpl implements JdbcStatement {
     @Override
     public int getQueryTimeout() throws SQLException {
         synchronized (checkClosed().getConnectionMutex()) {
-            return Math.toIntExact(getTimeoutInMillis() / 1000);
+            return getTimeoutInMillis() / 1000;
         }
     }
 
@@ -2206,12 +2197,12 @@ public class StatementImpl implements JdbcStatement {
     }
 
     @Override
-    public long getTimeoutInMillis() {
+    public int getTimeoutInMillis() {
         return this.query.getTimeoutInMillis();
     }
 
     @Override
-    public void setTimeoutInMillis(long timeoutInMillis) {
+    public void setTimeoutInMillis(int timeoutInMillis) {
         this.query.setTimeoutInMillis(timeoutInMillis);
     }
 

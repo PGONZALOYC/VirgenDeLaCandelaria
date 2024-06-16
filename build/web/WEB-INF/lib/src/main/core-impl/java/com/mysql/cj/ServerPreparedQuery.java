@@ -548,7 +548,7 @@ public class ServerPreparedQuery extends ClientPreparedQuery {
 
         if (this.queryBindings != null) {
             hadLongData = this.queryBindings.clearBindValues();
-            this.queryBindings.setLongParameterSwitchDetected(clearServerParameters && hadLongData);
+            this.queryBindings.setLongParameterSwitchDetected(clearServerParameters && hadLongData ? false : true);
         }
 
         if (clearServerParameters && hadLongData) {
@@ -567,8 +567,6 @@ public class ServerPreparedQuery extends ClientPreparedQuery {
                 this.session.getProtocol().getServerSession().preserveOldTransactionState();
                 this.session.clearInputStream();
             }
-            // Nothing to be detected after a reset...
-            this.queryBindings.setLongParameterSwitchDetected(false);
         }
     }
 

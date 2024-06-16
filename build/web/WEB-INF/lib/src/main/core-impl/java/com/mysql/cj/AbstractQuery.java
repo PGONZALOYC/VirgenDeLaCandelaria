@@ -66,7 +66,7 @@ public abstract class AbstractQuery implements Query {
     private CancelStatus cancelStatus = CancelStatus.NOT_CANCELED;
 
     /** The timeout for a query */
-    protected long timeoutInMillis = 0L;
+    protected int timeoutInMillis = 0;
 
     /** Holds batched commands */
     protected List<Object> batchedArgs;
@@ -206,17 +206,17 @@ public abstract class AbstractQuery implements Query {
     }
 
     @Override
-    public long getTimeoutInMillis() {
+    public int getTimeoutInMillis() {
         return this.timeoutInMillis;
     }
 
     @Override
-    public void setTimeoutInMillis(long timeoutInMillis) {
+    public void setTimeoutInMillis(int timeoutInMillis) {
         this.timeoutInMillis = timeoutInMillis;
     }
 
     @Override
-    public CancelQueryTask startQueryTimer(Query stmtToCancel, long timeout) {
+    public CancelQueryTask startQueryTimer(Query stmtToCancel, int timeout) {
         if (this.session.getPropertySet().getBooleanProperty(PropertyKey.enableQueryTimeouts).getValue() && timeout != 0) {
             CancelQueryTaskImpl timeoutTask = new CancelQueryTaskImpl(stmtToCancel);
             this.session.getCancelTimer().schedule(timeoutTask, timeout);

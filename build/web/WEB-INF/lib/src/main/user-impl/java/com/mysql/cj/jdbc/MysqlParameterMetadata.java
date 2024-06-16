@@ -77,11 +77,6 @@ public class MysqlParameterMetadata implements ParameterMetaData {
 
     @Override
     public int isNullable(int arg0) throws SQLException {
-        if (this.returnSimpleMetadata) {
-            checkBounds(arg0);
-            return ParameterMetaData.parameterNullableUnknown;
-        }
-
         checkAvailable();
 
         return this.metadata.isNullable(arg0);

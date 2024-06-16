@@ -188,10 +188,7 @@ class EscapeProcessor {
                             newSql.append(token); // it's just part of the query, push possible syntax errors onto server's shoulders
                         }
                     } else if (StringUtils.startsWithIgnoreCase(collapsedToken, "{fn")) {
-                        int startPos = token.toLowerCase().indexOf("fn") + 2;
-                        if (token.charAt(startPos) == ' ') {
-                            startPos++;
-                        }
+                        int startPos = token.toLowerCase().indexOf("fn ") + 3;
                         int endPos = token.length() - 1; // no }
 
                         String fnToken = token.substring(startPos, endPos);
