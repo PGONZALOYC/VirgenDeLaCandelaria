@@ -142,9 +142,9 @@ for (int i=1; i <= cant_paginas; i++){
                                             document.getElementById('e_direccionImput').value = '<%=apoderado.getDireccion()%>';
                                             document.getElementById('e_distritoImput').value = '<%=apoderado.getDistrito()%>';
                                             document.getElementById('e_departamentoImput').value = '<%=apoderado.getDepartamento()%>';
-                                           <%if (("Masculino").equals(apoderado.getGenero())) {
+                                           <%if (("Masculino").equals(apoderado.getSexo())) {
                                            %> document.getElementById('e_generoInput').value = 1;<%
-                                              } else if (("Femenino").equals(apoderado.getGenero())){
+                                              } else if (("Femenino").equals(apoderado.getSexo())){
                                            %>document.getElementById('e_generoInput').value = 2;<%
                                             }%>
                                             document.getElementById('e_fecNacImput').value = '<%=apoderado.getFecha_Nac()%>';"

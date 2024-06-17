@@ -120,40 +120,46 @@ for (int i=1; i <= cant_paginas; i++){
                         </select>
 
                         <script>
-                            function actualizarGrados() {
-                                var nivelSeleccionado = document.getElementById("seleccionar-nivel").value;
-                                var gradosComboBox = document.getElementById("seleccionar-grado");
+                            document.addEventListener("DOMContentLoaded", function () {
+                                function actualizarGrados() {
+                                    var nivelSeleccionado = document.getElementById("seleccionar-nivel").value;
+                                    var gradosComboBox = document.getElementById("seleccionar-grado");
 
-                                // Limpiar opciones actuales
-                                gradosComboBox.innerHTML = "";
+                                    // Limpiar opciones actuales
+                                    gradosComboBox.innerHTML = '<option value="" disabled selected hidden>Seleccionar grado</option>';
 
-                                // Añadir nuevas opciones según el nivel seleccionado
-                                if (nivelSeleccionado === "Inicial") {
-                                    agregarOpcion("3 años", gradosComboBox);
-                                    agregarOpcion("4 años", gradosComboBox);
-                                    agregarOpcion("5 años", gradosComboBox);
-                                } else if (nivelSeleccionado === "Primaria") {
-                                    agregarOpcion("Primero", gradosComboBox);
-                                    agregarOpcion("Segundo", gradosComboBox);
-                                    agregarOpcion("Tercero", gradosComboBox);
-                                    agregarOpcion("Cuarto", gradosComboBox);
-                                    agregarOpcion("Quinto", gradosComboBox);
-                                    agregarOpcion("Sexto", gradosComboBox);
-                                } else if (nivelSeleccionado === "Secundaria") {
-                                    agregarOpcion("Primero", gradosComboBox);
-                                    agregarOpcion("Segundo", gradosComboBox);
-                                    agregarOpcion("Tercero", gradosComboBox);
-                                    agregarOpcion("Cuarto", gradosComboBox);
-                                    agregarOpcion("Quinto", gradosComboBox);
+                                    // Añadir nuevas opciones según el nivel seleccionado
+                                    if (nivelSeleccionado === "Inicial") {
+                                        agregarOpcion("3 años", gradosComboBox);
+                                        agregarOpcion("4 años", gradosComboBox);
+                                        agregarOpcion("5 años", gradosComboBox);
+                                    } else if (nivelSeleccionado === "Primaria") {
+                                        agregarOpcion("Primero", gradosComboBox);
+                                        agregarOpcion("Segundo", gradosComboBox);
+                                        agregarOpcion("Tercero", gradosComboBox);
+                                        agregarOpcion("Cuarto", gradosComboBox);
+                                        agregarOpcion("Quinto", gradosComboBox);
+                                        agregarOpcion("Sexto", gradosComboBox);
+                                    } else if (nivelSeleccionado === "Secundaria") {
+                                        agregarOpcion("Primero", gradosComboBox);
+                                        agregarOpcion("Segundo", gradosComboBox);
+                                        agregarOpcion("Tercero", gradosComboBox);
+                                        agregarOpcion("Cuarto", gradosComboBox);
+                                        agregarOpcion("Quinto", gradosComboBox);
+                                    }
+                                    // Puedes agregar más casos según tus necesidades
                                 }
-                                // Puedes agregar más casos según tus necesidades
-                            }
 
-                            function agregarOpcion(texto, selectElement) {
-                                var opcion = document.createElement("option");
-                                opcion.text = texto;
-                                selectElement.add(opcion);
-                            }
+                                function agregarOpcion(texto, selectElement) {
+                                    var opcion = document.createElement("option");
+                                    opcion.text = texto;
+                                    opcion.value = texto.toLowerCase();  // Asegúrate de que value tenga sentido para tu backend
+                                    selectElement.add(opcion);
+                                }
+
+                                // Asegurarse de que la función está disponible globalmente
+                                window.actualizarGrados = actualizarGrados;
+                            });
                         </script>
 
                         <button id="btm-filtar" class="btn btn-outline-success mx-5 px-4" type="submit">
@@ -320,40 +326,46 @@ for (int i=1; i <= cant_paginas; i++){
                                         </div>
 
                                         <script>
-                                            function actualizarGrados() {
-                                                var nivelSeleccionado = document.getElementById("seleccionar-nivel1").value;
-                                                var gradosComboBox = document.getElementById("seleccionar-grado1");
+                                            document.addEventListener("DOMContentLoaded", function () {
+                                                function actualizarGrados() {
+                                                    var nivelSeleccionado = document.getElementById("seleccionar-nivel").value;
+                                                    var gradosComboBox = document.getElementById("seleccionar-grado");
 
-                                                // Limpiar opciones actuales
-                                                gradosComboBox.innerHTML = "";
+                                                    // Limpiar opciones actuales
+                                                    gradosComboBox.innerHTML = '<option value="" disabled selected hidden>Seleccionar grado</option>';
 
-                                                // Añadir nuevas opciones según el nivel seleccionado
-                                                if (nivelSeleccionado === "Inicial") {
-                                                    agregarOpcion("3 años", gradosComboBox);
-                                                    agregarOpcion("4 años", gradosComboBox);
-                                                    agregarOpcion("5 años", gradosComboBox);
-                                                } else if (nivelSeleccionado === "Primaria") {
-                                                    agregarOpcion("Primero", gradosComboBox);
-                                                    agregarOpcion("Segundo", gradosComboBox);
-                                                    agregarOpcion("Tercero", gradosComboBox);
-                                                    agregarOpcion("Cuarto", gradosComboBox);
-                                                    agregarOpcion("Quinto", gradosComboBox);
-                                                    agregarOpcion("Sexto", gradosComboBox);
-                                                } else if (nivelSeleccionado === "Secundaria") {
-                                                    agregarOpcion("Primero", gradosComboBox);
-                                                    agregarOpcion("Segundo", gradosComboBox);
-                                                    agregarOpcion("Tercero", gradosComboBox);
-                                                    agregarOpcion("Cuarto", gradosComboBox);
-                                                    agregarOpcion("Quinto", gradosComboBox);
+                                                    // Añadir nuevas opciones según el nivel seleccionado
+                                                    if (nivelSeleccionado === "Inicial") {
+                                                        agregarOpcion("3 años", gradosComboBox);
+                                                        agregarOpcion("4 años", gradosComboBox);
+                                                        agregarOpcion("5 años", gradosComboBox);
+                                                    } else if (nivelSeleccionado === "Primaria") {
+                                                        agregarOpcion("Primero", gradosComboBox);
+                                                        agregarOpcion("Segundo", gradosComboBox);
+                                                        agregarOpcion("Tercero", gradosComboBox);
+                                                        agregarOpcion("Cuarto", gradosComboBox);
+                                                        agregarOpcion("Quinto", gradosComboBox);
+                                                        agregarOpcion("Sexto", gradosComboBox);
+                                                    } else if (nivelSeleccionado === "Secundaria") {
+                                                        agregarOpcion("Primero", gradosComboBox);
+                                                        agregarOpcion("Segundo", gradosComboBox);
+                                                        agregarOpcion("Tercero", gradosComboBox);
+                                                        agregarOpcion("Cuarto", gradosComboBox);
+                                                        agregarOpcion("Quinto", gradosComboBox);
+                                                    }
+                                                    // Puedes agregar más casos según tus necesidades
                                                 }
-                                                // Puedes agregar más casos según tus necesidades
-                                            }
 
-                                            function agregarOpcion(texto, selectElement) {
-                                                var opcion = document.createElement("option");
-                                                opcion.text = texto;
-                                                selectElement.add(opcion);
-                                            }
+                                                function agregarOpcion(texto, selectElement) {
+                                                    var opcion = document.createElement("option");
+                                                    opcion.text = texto;
+                                                    opcion.value = texto.toLowerCase();  // Asegúrate de que value tenga sentido para tu backend
+                                                    selectElement.add(opcion);
+                                                }
+
+                                                // Asegurarse de que la función está disponible globalmente
+                                                window.actualizarGrados = actualizarGrados;
+                                            });
                                         </script>
 
 
@@ -390,7 +402,7 @@ for (int i=1; i <= cant_paginas; i++){
                                         <h6 class="label-info">Sexo:</h6>
                                         <h6 style="font-weight: normal" class="label-info"> <% 
                                                 if (imprimeEst){
-                                            %><%=estEncontrado.getGenero()%><%
+                                            %><%=estEncontrado.getSexo()%><%
                                                    }
                                             %></h6>
                                     </div>
@@ -414,14 +426,12 @@ for (int i=1; i <= cant_paginas; i++){
                                     </div>
                                     <div class="col-3">
                                         <h6 class="label-info">Provincia:</h6>
-                                        <h6 style="font-weight: normal" class="label-info"> 
-                                            <%--
+                                        <h6 style="font-weight: normal" class="label-info">
                                                     <% 
                                                     if (imprimeEst){
-                                                %><%=estEncontrado.getDistrito()%><%
+                                                %><%=estEncontrado.getProvincia()%><%
                                                        }
                                                 %>
-                                            --%>
                                         </h6>
                                     </div>
                                 </div>

@@ -98,7 +98,7 @@ public class Matricula {
     
     public void agregarMatricula(Matricula matricula) {
         try {
-            String sql = "INSERT INTO Matricula (id_Grado, id_Apoderado, id_Usuario, Estado, id_Estudiante) VALUES (?, ?, ?, ?, ?)";
+            String sql = "INSERT INTO matricula (id_Grado, id_Apoderado, id_Usuario, estado, id_Estudiante) VALUES (?, ?, ?, ?, ?)";
             try (PreparedStatement statement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
                 statement.setInt(1, matricula.getIdGrado());
                 statement.setInt(2, matricula.getIdApoderado());
@@ -121,7 +121,7 @@ public class Matricula {
 
     public void actualizarMatricula(Matricula matricula) {
         try {
-            String sql = "UPDATE Matricula SET id_Grado = ?, id_Apoderado = ?, id_Usuario = ?, estado = ?, id_Estudiante = ? WHERE id_Matricula = ?";
+            String sql = "UPDATE matricula SET id_Grado = ?, id_Apoderado = ?, id_Usuario = ?, estado = ?, id_Estudiante = ? WHERE id_Matricula = ?";
             try (PreparedStatement statement = connection.prepareStatement(sql)) {
                 statement.setInt(1, matricula.getIdGrado());
                 statement.setInt(2, matricula.getIdApoderado());
@@ -139,7 +139,7 @@ public class Matricula {
     public Matricula obtenerMatricula(int idMatricula) {
         Matricula matricula = null;
         try {
-            String sql = "SELECT * FROM Matricula WHERE id_Matricula = ?";
+            String sql = "SELECT * FROM matricula WHERE id_Matricula = ?";
             try (PreparedStatement statement = connection.prepareStatement(sql)) {
                 statement.setInt(1, idMatricula);
                 try (ResultSet resultSet = statement.executeQuery()) {
@@ -164,7 +164,7 @@ public class Matricula {
     public Estudiante obtenerEstudiantePorDni(String dni) {
         Estudiante estudiante = null;
         try {
-            String sql = "SELECT * FROM Estudiante WHERE  = ?";
+            String sql = "SELECT * FROM estudiante WHERE  = ?";
             try (PreparedStatement statement = connection.prepareStatement(sql)) {
                 statement.setString(1, dni);
                 try (ResultSet resultSet = statement.executeQuery()) {
@@ -193,7 +193,7 @@ public class Matricula {
     public List<Estudiante> obtenerListaEstudiantes() {
         List<Estudiante> estudiantes = new ArrayList<>();
         try {
-            String sql = "SELECT * FROM Estudiante";
+            String sql = "SELECT * FROM estudiante";
             try (Statement statement = connection.createStatement(); ResultSet resultSet = statement.executeQuery(sql)) {
                 while (resultSet.next()) {
                     Estudiante estudiante = new Estudiante();

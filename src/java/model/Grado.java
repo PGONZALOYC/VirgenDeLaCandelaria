@@ -4,9 +4,9 @@ import utilidades.Conexion;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
- 
 
 public class Grado {
+
     private Connection connection;
 
     private int idGrado;
@@ -15,7 +15,7 @@ public class Grado {
     private int Capacidad;
     private int VacOcupa;
     private int VacDisp;
-    
+
     public Grado() {
         try {
             Conexion conexion = new Conexion();
@@ -90,36 +90,36 @@ public class Grado {
     public void setVacDisp(int VacDisp) {
         this.VacDisp = VacDisp;
     }
-    
-    public void actualizarGrado(Grado grado){
-        try{
-            String sql="UPDATE Grado SET Nivel = ?, Grado = ?, Cap_Vac = ?,Vac_Ocu = ?,Vac_Disp =? WHERE Id_Grado = ?";
-            try(PreparedStatement statement = connection.prepareStatement(sql)){
-                
+
+    public void actualizarGrado(Grado grado) {
+        try {
+            String sql = "UPDATE Grado SET nivel = ?, grado = ?, capacidad_Vacantes = ?,vacantes_Ocupadas = ?,vacantes_Disponibles =? WHERE id_Grado = ?";
+            try (PreparedStatement statement = connection.prepareStatement(sql)) {
+
             }
-        }catch(SQLException e){
+        } catch (SQLException e) {
             e.printStackTrace();
         }
     }
-    
-    public Grado obtenerGradoporFiltro(String nivel, String grados){
-        Grado grado =null;
-        try{
-             String sql = "SELECT * FROM Grado WHERE Nivel = ? AND Grado = ?";
-            
+
+    public Grado obtenerGradoporFiltro(String nivel, String grados) {
+        Grado grado = null;
+        try {
+            String sql = "SELECT * FROM grado WHERE nivel = ? AND grado = ?";
+
             try (PreparedStatement statement = connection.prepareStatement(sql)) {
                 statement.setString(1, nivel);
                 statement.setString(2, grados);
 
                 try (ResultSet resultSet = statement.executeQuery()) {
                     if (resultSet.next()) {
-                        grado =new Grado();
-                        grado.setIdGrado(resultSet.getInt("Id_Grado"));
-                        grado.setNivel(resultSet.getString("Nivel"));
-                        grado.setGrado(resultSet.getString("Grado"));
-                        grado.setCapacidad(resultSet.getInt("Cap_Vac"));
-                        grado.setVacOcupa(resultSet.getInt("Vac_Ocu"));
-                        grado.setVacDisp(resultSet.getInt("Vac_Disp"));
+                        grado = new Grado();
+                        grado.setIdGrado(resultSet.getInt("id_Grado"));
+                        grado.setNivel(resultSet.getString("nivel"));
+                        grado.setGrado(resultSet.getString("grado"));
+                        grado.setCapacidad(resultSet.getInt("capacidad_Vacantes"));
+                        grado.setVacOcupa(resultSet.getInt("vacantes_Ocupadas"));
+                        grado.setVacDisp(resultSet.getInt("vacantes_Disponibles"));
                     }
                 }
             }
@@ -128,27 +128,27 @@ public class Grado {
         }
         return grado;
     }
-    
-    public List <Grado> obtenerListaGrado(){
+
+    public List<Grado> obtenerListaGrado() {
         List<Grado> grados = new ArrayList<>();
-        try{
-            String sql ="SELECT * FROM Grado";
+        try {
+            String sql = "SELECT * FROM grado";
             try (Statement statement = connection.createStatement(); ResultSet resultSet = statement.executeQuery(sql)) {
-               while(resultSet.next()){
-                   Grado grado = new Grado();
-                   grado.setIdGrado(resultSet.getInt("Id_Grado"));
-                   grado.setNivel(resultSet.getString("Nivel"));
-                   grado.setGrado(resultSet.getString("Grado"));
-                   grado.setCapacidad(resultSet.getInt("Cap_Vac"));
-                   grado.setVacOcupa(resultSet.getInt("Vac_Ocu"));
-                   grado.setVacDisp(resultSet.getInt("Vac_Disp"));
-                   grados.add(grado);
-               } 
+                while (resultSet.next()) {
+                    Grado grado = new Grado();
+                    grado.setIdGrado(resultSet.getInt("id_Grado"));
+                    grado.setNivel(resultSet.getString("nivel"));
+                    grado.setGrado(resultSet.getString("grado"));
+                    grado.setCapacidad(resultSet.getInt("capacidad_Vacantes"));
+                    grado.setVacOcupa(resultSet.getInt("vacantes_Ocupadas"));
+                    grado.setVacDisp(resultSet.getInt("vacantes_Disponibles"));
+                    grados.add(grado);
+                }
             }
-            
-        }catch(SQLException e){
+
+        } catch (SQLException e) {
             e.printStackTrace();
         }
-    return grados;
+        return grados;
     }
 }

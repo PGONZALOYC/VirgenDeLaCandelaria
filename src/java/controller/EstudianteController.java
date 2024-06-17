@@ -69,11 +69,11 @@ public class EstudianteController extends HttpServlet {
                     String direccion = request.getParameter("a_direccion");
                     String departamento = request.getParameter("a_departamento");
                     String distrito = request.getParameter("a_distrito");
-                    String genero = "";
-                    if (request.getParameter("a_genero").equals("1")) {
-                        genero = "Masculino";
-                    } else if (request.getParameter("a_genero").equals("2")) {
-                        genero = "Femenino";
+                    String sexo = "";
+                    if (request.getParameter("a_sexo").equals("1")) {
+                        sexo = "Masculino";
+                    } else if (request.getParameter("a_sexo").equals("2")) {
+                        sexo = "Femenino";
                     }
                     String fechaNac = request.getParameter("a_birthdate");
 
@@ -84,7 +84,7 @@ public class EstudianteController extends HttpServlet {
                     estudianteNuevo.setDireccion(direccion);
                     estudianteNuevo.setDepartamento(departamento);
                     estudianteNuevo.setDistrito(distrito);
-                    estudianteNuevo.setGenero(genero);
+                    estudianteNuevo.setSexo(sexo);
                     estudianteNuevo.setFecha_Nac(fechaNac);
 
                     estudianteDAO.agregarEstudiante(estudianteNuevo);
@@ -108,12 +108,12 @@ public class EstudianteController extends HttpServlet {
                     direccion = request.getParameter("e_direccion");
                     departamento = request.getParameter("e_departamento");
                     distrito = request.getParameter("e_distrito");
-                    if (request.getParameter("e_genero").equals("1")) {
-                        genero = "Masculino";
-                    } else if (request.getParameter("e_genero").equals("2")) {
-                        genero = "Femenino";
+                    if (request.getParameter("e_sexo").equals("1")) {
+                        sexo = "Masculino";
+                    } else if (request.getParameter("e_sexo").equals("2")) {
+                        sexo = "Femenino";
                     } else {
-                        genero = estudianteActualizar.obtenerEstudiante(Integer.parseInt(idEstudiante)).getGenero();
+                        sexo = estudianteActualizar.obtenerEstudiante(Integer.parseInt(idEstudiante)).getSexo();
                     }
 
                     fechaNac = request.getParameter("e_birthdate");
@@ -126,7 +126,7 @@ public class EstudianteController extends HttpServlet {
                     estudianteActualizar.setDireccion(direccion);
                     estudianteActualizar.setDepartamento(departamento);
                     estudianteActualizar.setDistrito(distrito);
-                    estudianteActualizar.setGenero(genero);
+                    estudianteActualizar.setSexo(sexo);
                     estudianteActualizar.setFecha_Nac(fechaNac);
 
                     estudianteDAO.actualizarEstudiante(estudianteActualizar);

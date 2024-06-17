@@ -134,9 +134,9 @@ for (int i=1; i <= cant_paginas; i++){
                                                 document.getElementById('e_direccionInput').value = '<%=estudiante.getDireccion()%>';
                                                 document.getElementById('e_departamentoInput').value = '<%=estudiante.getDepartamento()%>';
                                                 document.getElementById('e_distritoInput').value = '<%=estudiante.getDistrito()%>';
-                                           <%if (("Masculino").equals(estudiante.getGenero())) {
+                                           <%if (("Masculino").equals(estudiante.getSexo())) {
                                            %> document.getElementById('e_generoInput').value = 1;<%
-                                              } else if (("Femenino").equals(estudiante.getGenero())){
+                                              } else if (("Femenino").equals(estudiante.getSexo())){
                                            %>document.getElementById('e_generoInput').value = 2;<%
                                             }%>
                                                 document.getElementById('e_fecNacInput').value = '<%=estudiante.getFecha_Nac()%>';
