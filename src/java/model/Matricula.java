@@ -98,7 +98,7 @@ public class Matricula {
     
     public void agregarMatricula(Matricula matricula) {
         try {
-            String sql = "INSERT INTO Matricula (Id_Grado, Id_Apoderado, Id_Usuario, Estado, Id_Estudiante) VALUES (?, ?, ?, ?, ?)";
+            String sql = "INSERT INTO Matricula (id_Grado, id_Apoderado, id_Usuario, Estado, id_Estudiante) VALUES (?, ?, ?, ?, ?)";
             try (PreparedStatement statement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
                 statement.setInt(1, matricula.getIdGrado());
                 statement.setInt(2, matricula.getIdApoderado());
@@ -121,7 +121,7 @@ public class Matricula {
 
     public void actualizarMatricula(Matricula matricula) {
         try {
-            String sql = "UPDATE Matricula SET Id_Grado = ?, Id_Apoderado = ?, Id_Usuario = ?, Estado = ?, Id_Estudiante = ? WHERE Id_Matricula = ?";
+            String sql = "UPDATE Matricula SET id_Grado = ?, id_Apoderado = ?, id_Usuario = ?, estado = ?, id_Estudiante = ? WHERE id_Matricula = ?";
             try (PreparedStatement statement = connection.prepareStatement(sql)) {
                 statement.setInt(1, matricula.getIdGrado());
                 statement.setInt(2, matricula.getIdApoderado());
@@ -139,18 +139,18 @@ public class Matricula {
     public Matricula obtenerMatricula(int idMatricula) {
         Matricula matricula = null;
         try {
-            String sql = "SELECT * FROM Matricula WHERE Id_Matricula = ?";
+            String sql = "SELECT * FROM Matricula WHERE id_Matricula = ?";
             try (PreparedStatement statement = connection.prepareStatement(sql)) {
                 statement.setInt(1, idMatricula);
                 try (ResultSet resultSet = statement.executeQuery()) {
                     if (resultSet.next()) {
                         matricula = new Matricula();
-                        matricula.setIdMatricula(resultSet.getInt( "Id_Matricula"));
-                        matricula.setIdGrado(resultSet.getInt("Id_Grado"));
-                        matricula.setIdApoderado(resultSet.getInt("Id_Apoderado"));
-                        matricula.setIdUsuario(resultSet.getInt("Id_Usuario"));
-                        matricula.setEstado(resultSet.getString("Estado"));
-                        matricula.setIdEstudiante(resultSet.getInt("Id_Estudiante"));
+                        matricula.setIdMatricula(resultSet.getInt( "id_Matricula"));
+                        matricula.setIdGrado(resultSet.getInt("id_Grado"));
+                        matricula.setIdApoderado(resultSet.getInt("id_Apoderado"));
+                        matricula.setIdUsuario(resultSet.getInt("id_Usuario"));
+                        matricula.setEstado(resultSet.getString("estado"));
+                        matricula.setIdEstudiante(resultSet.getInt("id_Estudiante"));
 
                     }
                 }
@@ -170,17 +170,17 @@ public class Matricula {
                 try (ResultSet resultSet = statement.executeQuery()) {
                     if (resultSet.next()) {
                         estudiante = new Estudiante();
-                        estudiante.setIdEstudiante(resultSet.getInt("Id_Estudiante"));
-                        estudiante.setDni(resultSet.getString("Dni"));
-                        estudiante.setApPaterno(resultSet.getString("Ap_Paterno"));
-                        estudiante.setApMaterno(resultSet.getString("Ap_Materno"));
-                        estudiante.setNombres(resultSet.getString("Nombres"));
-                        estudiante.setDireccion(resultSet.getString("Direccion"));
-                        estudiante.setDepartamento(resultSet.getString("Departamento"));
-                        estudiante.setDistrito(resultSet.getString("Distrito"));
-                        estudiante.setNombres(resultSet.getString("Nombres"));
-                        estudiante.setGenero(resultSet.getString("Genero"));
-                        estudiante.setFecha_Nac(resultSet.getString("Fecha_Nac"));
+                        estudiante.setIdEstudiante(resultSet.getInt("id_Estudiante"));
+                        estudiante.setDni(resultSet.getString("dni"));
+                        estudiante.setApPaterno(resultSet.getString("apellido_Paterno"));
+                        estudiante.setApMaterno(resultSet.getString("apellido_Materno"));
+                        estudiante.setNombres(resultSet.getString("nombres"));
+                        estudiante.setDireccion(resultSet.getString("direccion"));
+                        estudiante.setDepartamento(resultSet.getString("departamento"));
+                        estudiante.setDistrito(resultSet.getString("distrito"));
+                        estudiante.setNombres(resultSet.getString("nombres"));
+                        estudiante.setSexo(resultSet.getString("sexo"));
+                        estudiante.setFecha_Nac(resultSet.getString("fecha_Nacimiento"));
                     }
                 }
             }
@@ -197,17 +197,17 @@ public class Matricula {
             try (Statement statement = connection.createStatement(); ResultSet resultSet = statement.executeQuery(sql)) {
                 while (resultSet.next()) {
                     Estudiante estudiante = new Estudiante();
-                    estudiante.setIdEstudiante(resultSet.getInt("Id_Estudiante"));
-                    estudiante.setDni(resultSet.getString("Dni"));
-                    estudiante.setApPaterno(resultSet.getString("Ap_Paterno"));
-                    estudiante.setApMaterno(resultSet.getString("Ap_Materno"));
-                    estudiante.setNombres(resultSet.getString("Nombres"));
-                    estudiante.setDireccion(resultSet.getString("Direccion"));
-                    estudiante.setDepartamento(resultSet.getString("Departamento"));
-                    estudiante.setDistrito(resultSet.getString("Distrito"));
-                    estudiante.setNombres(resultSet.getString("Nombres"));
-                    estudiante.setGenero(resultSet.getString("Genero"));
-                    estudiante.setFecha_Nac(resultSet.getString("Fecha_Nac"));
+                   estudiante.setIdEstudiante(resultSet.getInt("id_Estudiante"));
+                        estudiante.setDni(resultSet.getString("dni"));
+                        estudiante.setApPaterno(resultSet.getString("apellido_Paterno"));
+                        estudiante.setApMaterno(resultSet.getString("apellido_Materno"));
+                        estudiante.setNombres(resultSet.getString("nombres"));
+                        estudiante.setDireccion(resultSet.getString("direccion"));
+                        estudiante.setDepartamento(resultSet.getString("departamento"));
+                        estudiante.setDistrito(resultSet.getString("distrito"));
+                        estudiante.setNombres(resultSet.getString("nombres"));
+                        estudiante.setSexo(resultSet.getString("sexo"));
+                        estudiante.setFecha_Nac(resultSet.getString("fecha_Nacimiento"));
                     estudiantes.add(estudiante);
                 }
             }
