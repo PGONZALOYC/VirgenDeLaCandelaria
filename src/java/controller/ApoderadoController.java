@@ -12,14 +12,19 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.text.ParseException;
 import java.util.ArrayList;
+import java.sql.Date;
 import java.util.List;
+import java.text.SimpleDateFormat;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 
 @WebServlet(name = "ApoderadoController", urlPatterns = {"/ApoderadoController"})
 public class ApoderadoController extends HttpServlet {
 
-    private final Apoderado apoderadoDAO=new Apoderado();
+    private final Apoderado apoderadoDAO = new Apoderado();
         
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -67,7 +72,7 @@ public class ApoderadoController extends HttpServlet {
                 case "agregar":
                     Apoderado apoderadoNuevo =new Apoderado();
                     
-                    String dni =request.getParameter("a_DNI");
+                    /*String dni =request.getParameter("a_DNI");
                     String estadoVida =request.getParameter("a_estado-vida");
                     String gradoInstruccion =request.getParameter("a_grado-instruccion");
                     String ocupacion =request.getParameter("a_ocupacion");
@@ -83,20 +88,51 @@ public class ApoderadoController extends HttpServlet {
                     } else if (request.getParameter("a_genero").equals("2")) {
                         genero = "Femenino";
                     }
-                    String fechaNac = request.getParameter("a_birthdate");
+                    String fechaNac = request.getParameter("a_birthdate");*/
+                    ////////////
+                    String dni =request.getParameter("a_DNI");
+                    String apellido_Paterno =request.getParameter("a_ape_paterno");
+                    String apellido_Materno =request.getParameter("a_ape_materno");
+                    String nombres =request.getParameter("a_nombres");
+                    String direccion = request.getParameter("a_direccion");
+                    String departamento = request.getParameter("a_departamento");
+                    String provincia = request.getParameter("a_provincia");
+                    String sexo = "";
+                    if (request.getParameter("a_genero").equals("1")) {
+                        sexo = "Masculino";
+                    } else if (request.getParameter("a_genero").equals("2")) {
+                        sexo = "Femenino";
+                    }
+                    String grado_instruccion =request.getParameter("a_grado-instruccion");
+                    String vive =request.getParameter("a_estado-vida");
+                    String ocupacion = request.getParameter("a_ocupacion");
+                    String telefono=request.getParameter("a_telefono");
+                    String distrito = request.getParameter("a_distrito");
+                    String fecha_Nacimiento_string =request.getParameter("a_birthdate");
+                    SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+                    Date fecha_Nacimiento = null;
+                    try {
+                        fecha_Nacimiento = (Date) formatter.parse(fecha_Nacimiento_string);
+                    } catch (ParseException ex) {
+                        Logger.getLogger(ApoderadoController.class.getName()).log(Level.SEVERE, null, ex);
+                    }
                     
+                    ////
                     apoderadoNuevo.setDni(dni);
-                    apoderadoNuevo.setEstadoVida(estadoVida);
-                    apoderadoNuevo.setGradoInstruccion(gradoInstruccion);
-                    apoderadoNuevo.setOcupacion(ocupacion);
-                    apoderadoNuevo.setTelefono(telefono);
-                    apoderadoNuevo.setApPaterno(apPaterno);
-                    apoderadoNuevo.setApMaterno(apMaterno);
+                    apoderadoNuevo.setApellido_Paterno(apellido_Paterno);
+                    apoderadoNuevo.setApellido_Materno(apellido_Materno);
+                    apoderadoNuevo.setNombres(nombres);
                     apoderadoNuevo.setDireccion(direccion);
-                    apoderadoNuevo.setDistrito(distrito);
                     apoderadoNuevo.setDepartamento(departamento);
-                    apoderadoNuevo.setGenero(genero);
-                    apoderadoNuevo.setFecha_Nac(fechaNac);
+                    apoderadoNuevo.setProvincia(provincia);
+                    apoderadoNuevo.setSexo(sexo);
+                    apoderadoNuevo.setGrado_Instruccion(grado_instruccion);
+                    apoderadoNuevo.setVive(vive);
+                    apoderadoNuevo.setOcupado(ocupacion);
+                    apoderadoNuevo.setTelefono(telefono);
+                    apoderadoNuevo.setDistrito(distrito);
+                    apoderadoNuevo.setFecha_Nacimiento( fecha_Nacimiento);
+                    
                     
                     apoderadoDAO.agregarApoderado(apoderadoNuevo);
                     List<Apoderado> listaApoderados=apoderadoDAO.obtenerListaApoderado();
@@ -107,8 +143,9 @@ public class ApoderadoController extends HttpServlet {
                     dispatcher.forward(request, response);
                     break;
 
+
                 case "actualizar":
-                    Apoderado apoderadoActualizar =new Apoderado();
+                    /*Apoderado apoderadoActualizar =new Apoderado();
                     
                     String idApoderado=request.getParameter("e_idEditar");
                     dni =request.getParameter("e_DNI");
@@ -149,7 +186,7 @@ public class ApoderadoController extends HttpServlet {
                     request.setAttribute("listaApoderados", listaApoderadosActualizar);
                     request.setAttribute("page", pagina);
                     RequestDispatcher dispatcherActualizar = request.getRequestDispatcher("lista-apoderados.jsp");
-                    dispatcherActualizar.forward(request, response);
+                    dispatcherActualizar.forward(request, response);*/
                     
                     break;
 
@@ -177,7 +214,7 @@ public class ApoderadoController extends HttpServlet {
                     break;
 
                 case "eliminar":
-                    idApoderado = request.getParameter("id");
+                    String idApoderado = request.getParameter("id");
                     apoderadoDAO.eliminarApoderado(Integer.parseInt(idApoderado));
                     List<Apoderado> listaApoderadosEliminar = apoderadoDAO.obtenerListaApoderado();
                     request.setAttribute("listaApoderados",listaApoderadosEliminar);

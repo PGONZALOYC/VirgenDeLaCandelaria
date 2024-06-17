@@ -68,7 +68,7 @@ public class GradoController extends HttpServlet {
                     String dniEstudiante = request.getParameter("dniEstudiante");
                     List<Grado> lista = gradoDAO.obtenerListaGrado();
                     Estudiante estudiante = estudianteDAO.obtenerEstudiantePorDni(dniEstudiante);
-                    List<Apoderado> listaApoRel = apoderadoDAO.obtenerListaApoderadoRelacionados(estudiante.getIdEstudiante());
+                    List<Apoderado> listaApoRel = apoderadoDAO.obtenerListaApoderadoRelacionados(estudiante.getId_Estudiante());
                     request.setAttribute("listaApoRel", listaApoRel);
                     request.setAttribute("listaGrados", lista);
                     request.setAttribute("page", pagina);

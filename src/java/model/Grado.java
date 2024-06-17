@@ -9,12 +9,12 @@ import java.util.List;
 public class Grado {
     private Connection connection;
 
-    private int idGrado;
-    private String Nivel;
-    private String Grado;
-    private int Capacidad;
-    private int VacOcupa;
-    private int VacDisp;
+    private int id_Grado;
+    private String nivel;
+    private String grado;
+    private int capacidad_Vacantes;
+    private int vacantes_Ocupadas;
+    private int vacantes_Disponibles;
     
     public Grado() {
         try {
@@ -25,14 +25,14 @@ public class Grado {
         }
     }
 
-    public Grado(Connection connection, int idGrado, String Nivel, String Grado, int Capacidad, int VacOcupa, int VacDisp) {
+    public Grado(Connection connection, int id_Grado, String nivel, String grado, int capacidad_Vacantes, int vacantes_Ocupadas, int vacantes_Disponibles) {
         this.connection = connection;
-        this.idGrado = idGrado;
-        this.Nivel = Nivel;
-        this.Grado = Grado;
-        this.Capacidad = Capacidad;
-        this.VacOcupa = VacOcupa;
-        this.VacDisp = VacDisp;
+        this.id_Grado = id_Grado;
+        this.nivel = nivel;
+        this.grado = grado;
+        this.capacidad_Vacantes = capacidad_Vacantes;
+        this.vacantes_Ocupadas = vacantes_Ocupadas;
+        this.vacantes_Disponibles = vacantes_Disponibles;
     }
 
     public Connection getConnection() {
@@ -43,57 +43,58 @@ public class Grado {
         this.connection = connection;
     }
 
-    public int getIdGrado() {
-        return idGrado;
+    public int getId_Grado() {
+        return id_Grado;
     }
 
-    public void setIdGrado(int idGrado) {
-        this.idGrado = idGrado;
+    public void setId_Grado(int id_Grado) {
+        this.id_Grado = id_Grado;
     }
 
     public String getNivel() {
-        return Nivel;
+        return nivel;
     }
 
-    public void setNivel(String Nivel) {
-        this.Nivel = Nivel;
+    public void setNivel(String nivel) {
+        this.nivel = nivel;
     }
 
     public String getGrado() {
-        return Grado;
+        return grado;
     }
 
-    public void setGrado(String Grado) {
-        this.Grado = Grado;
+    public void setGrado(String grado) {
+        this.grado = grado;
     }
 
-    public int getCapacidad() {
-        return Capacidad;
+    public int getCapacidad_Vacantes() {
+        return capacidad_Vacantes;
     }
 
-    public void setCapacidad(int Capacidad) {
-        this.Capacidad = Capacidad;
+    public void setCapacidad_Vacantes(int capacidad_Vacantes) {
+        this.capacidad_Vacantes = capacidad_Vacantes;
     }
 
-    public int getVacOcupa() {
-        return VacOcupa;
+    public int getVacantes_Ocupadas() {
+        return vacantes_Ocupadas;
     }
 
-    public void setVacOcupa(int VacOcupa) {
-        this.VacOcupa = VacOcupa;
+    public void setVacantes_Ocupadas(int vacantes_Ocupadas) {
+        this.vacantes_Ocupadas = vacantes_Ocupadas;
     }
 
-    public int getVacDisp() {
-        return VacDisp;
+    public int getVacantes_Disponibles() {
+        return vacantes_Disponibles;
     }
 
-    public void setVacDisp(int VacDisp) {
-        this.VacDisp = VacDisp;
+    public void setVacantes_Disponibles(int vacantes_Disponibles) {
+        this.vacantes_Disponibles = vacantes_Disponibles;
     }
+
     
     public void actualizarGrado(Grado grado){
         try{
-            String sql="UPDATE Grado SET Nivel = ?, Grado = ?, Cap_Vac = ?,Vac_Ocu = ?,Vac_Disp =? WHERE Id_Grado = ?";
+            String sql="UPDATE Grado SET nivel = ?, grado = ?, capacidad_Vacantes = ?, vacantes_Ocupadas = ?,vacantes_Disponibles =? WHERE id_Grado = ?";
             try(PreparedStatement statement = connection.prepareStatement(sql)){
                 
             }
@@ -105,7 +106,7 @@ public class Grado {
     public Grado obtenerGradoporFiltro(String nivel, String grados){
         Grado grado =null;
         try{
-             String sql = "SELECT * FROM Grado WHERE Nivel = ? AND Grado = ?";
+             String sql = "SELECT * FROM Grado WHERE nivel = ? AND grado = ?";
             
             try (PreparedStatement statement = connection.prepareStatement(sql)) {
                 statement.setString(1, nivel);
@@ -114,12 +115,12 @@ public class Grado {
                 try (ResultSet resultSet = statement.executeQuery()) {
                     if (resultSet.next()) {
                         grado =new Grado();
-                        grado.setIdGrado(resultSet.getInt("Id_Grado"));
-                        grado.setNivel(resultSet.getString("Nivel"));
-                        grado.setGrado(resultSet.getString("Grado"));
-                        grado.setCapacidad(resultSet.getInt("Cap_Vac"));
-                        grado.setVacOcupa(resultSet.getInt("Vac_Ocu"));
-                        grado.setVacDisp(resultSet.getInt("Vac_Disp"));
+                        grado.setId_Grado(resultSet.getInt("id_Grado"));
+                        grado.setNivel(resultSet.getString("nivel"));
+                        grado.setGrado(resultSet.getString("grado"));
+                        grado.setCapacidad_Vacantes(resultSet.getInt("capacidad_Vacantes"));
+                        grado.setVacantes_Ocupadas(resultSet.getInt("vacantes_Ocupadas"));
+                        grado.setVacantes_Disponibles(resultSet.getInt("vacantes_Disponibles"));
                     }
                 }
             }
@@ -132,16 +133,16 @@ public class Grado {
     public List <Grado> obtenerListaGrado(){
         List<Grado> grados = new ArrayList<>();
         try{
-            String sql ="SELECT * FROM Grado";
+            String sql ="SELECT * FROM grado";
             try (Statement statement = connection.createStatement(); ResultSet resultSet = statement.executeQuery(sql)) {
                while(resultSet.next()){
                    Grado grado = new Grado();
-                   grado.setIdGrado(resultSet.getInt("Id_Grado"));
-                   grado.setNivel(resultSet.getString("Nivel"));
-                   grado.setGrado(resultSet.getString("Grado"));
-                   grado.setCapacidad(resultSet.getInt("Cap_Vac"));
-                   grado.setVacOcupa(resultSet.getInt("Vac_Ocu"));
-                   grado.setVacDisp(resultSet.getInt("Vac_Disp"));
+                   grado.setId_Grado(resultSet.getInt("id_Grado"));
+                   grado.setNivel(resultSet.getString("nivel"));
+                   grado.setGrado(resultSet.getString("grado"));
+                   grado.setCapacidad_Vacantes(resultSet.getInt("capacidad_Vacantes"));
+                   grado.setVacantes_Ocupadas(resultSet.getInt("vacantes_Ocupadas"));
+                   grado.setVacantes_Disponibles(resultSet.getInt("vacantes_Disponibles"));
                    grados.add(grado);
                } 
             }

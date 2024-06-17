@@ -60,7 +60,7 @@ public class EstudianteController extends HttpServlet {
             int pagina = Integer.parseInt(request.getParameter("page"));
             switch (accion.toLowerCase()) {
                 case "agregar":
-                    Estudiante estudianteNuevo = new Estudiante();
+                    /*Estudiante estudianteNuevo = new Estudiante();
 
                     String dni = request.getParameter("a_DNI");
                     String apPaterno = request.getParameter("a_ape-paterno");
@@ -94,11 +94,11 @@ public class EstudianteController extends HttpServlet {
                     request.setAttribute("listaEstudiantes", listaEstudiantes);
                     request.setAttribute("page", pagina);
                     RequestDispatcher dispatcher = request.getRequestDispatcher("lista-estudiantes.jsp");
-                    dispatcher.forward(request, response);
+                    dispatcher.forward(request, response);*/
                     break;
 
                 case "actualizar":
-                    Estudiante estudianteActualizar = new Estudiante();
+                    /*Estudiante estudianteActualizar = new Estudiante();
 
                     String idEstudiante = request.getParameter("e_idEditar");
                     dni = request.getParameter("e_DNI");
@@ -135,7 +135,7 @@ public class EstudianteController extends HttpServlet {
                     request.setAttribute("listaEstudiantes", listaEstudiantesActualizar);
                     request.setAttribute("page", pagina);
                     RequestDispatcher dispatcherActualizar = request.getRequestDispatcher("lista-estudiantes.jsp");
-                    dispatcherActualizar.forward(request, response);
+                    dispatcherActualizar.forward(request, response);*/
                     break;
 
                 case "listar":
@@ -162,7 +162,7 @@ public class EstudianteController extends HttpServlet {
                     break;
 
                 case "eliminar":
-                    idEstudiante = request.getParameter("id");
+                    String idEstudiante = request.getParameter("id");
                     estudianteDAO.eliminarEstudiante(Integer.parseInt(idEstudiante));
                     List<Estudiante> listaEstudiantesEliminar = estudianteDAO.obtenerListaEstudiantes();
                     request.setAttribute("listaEstudiantes", listaEstudiantesEliminar);

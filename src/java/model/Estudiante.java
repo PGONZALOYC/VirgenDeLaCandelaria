@@ -12,16 +12,18 @@ import java.util.List;
 public class Estudiante {
 
     private Connection connection;
-    private int idEstudiante;
-    private String Dni;
-    private String ApPaterno;
-    private String ApMaterno;
-    private String Nombres;
-    private String Direccion;
-    private String Departamento;
-    private String Distrito;
-    private String Genero;
-    private String Fecha_Nac;
+    
+    private int id_Estudiante;
+    private String dni;
+    private String apellido_Paterno;
+    private String apellido_Materno;
+    private String nombres;
+    private String direccion;
+    private String distrito;
+    private String provincia;
+    private String departamento;
+    private String sexo;
+    private Date fecha_Nacimiento;
 
     public Estudiante() {
         try {
@@ -32,118 +34,138 @@ public class Estudiante {
         }
     }
 
-    public Estudiante(Connection connection, int idEstudiante, String Dni, String ApPaterno, String ApMaterno, String Nombres, String Direccion, String Departamento, String Distrito, String Genero, String Fecha_Nac) {
+    public Estudiante(Connection connection, int id_Estudiante, String dni, String apellido_Paterno, String apellido_Materno, String nombres, String direccion, String distrito, String provincia, String departamento, String sexo, Date fecha_Nacimiento) {
         this.connection = connection;
-        this.idEstudiante = idEstudiante;
-        this.Dni = Dni;
-        this.ApPaterno = ApPaterno;
-        this.ApMaterno = ApMaterno;
-        this.Nombres = Nombres;
-        this.Direccion = Direccion;
-        this.Departamento = Departamento;
-        this.Distrito = Distrito;
-        this.Genero = Genero;
-        this.Fecha_Nac = Fecha_Nac;
+        this.id_Estudiante = id_Estudiante;
+        this.dni = dni;
+        this.apellido_Paterno = apellido_Paterno;
+        this.apellido_Materno = apellido_Materno;
+        this.nombres = nombres;
+        this.direccion = direccion;
+        this.distrito = distrito;
+        this.provincia = provincia;
+        this.departamento = departamento;
+        this.sexo = sexo;
+        this.fecha_Nacimiento = fecha_Nacimiento;
     }
 
-    public int getIdEstudiante() {
-        return idEstudiante;
+    public Connection getConnection() {
+        return connection;
     }
 
-    public void setIdEstudiante(int idEstudiante) {
-        this.idEstudiante = idEstudiante;
+    public void setConnection(Connection connection) {
+        this.connection = connection;
+    }
+
+    public int getId_Estudiante() {
+        return id_Estudiante;
+    }
+
+    public void setId_Estudiante(int id_Estudiante) {
+        this.id_Estudiante = id_Estudiante;
     }
 
     public String getDni() {
-        return Dni;
+        return dni;
     }
 
-    public void setDni(String Dni) {
-        this.Dni = Dni;
+    public void setDni(String dni) {
+        this.dni = dni;
     }
 
-    public String getApPaterno() {
-        return ApPaterno;
+    public String getApellido_Paterno() {
+        return apellido_Paterno;
     }
 
-    public void setApPaterno(String ApPaterno) {
-        this.ApPaterno = ApPaterno;
+    public void setApellido_Paterno(String apellido_Paterno) {
+        this.apellido_Paterno = apellido_Paterno;
     }
 
-    public String getApMaterno() {
-        return ApMaterno;
+    public String getApellido_Materno() {
+        return apellido_Materno;
     }
 
-    public void setApMaterno(String ApMaterno) {
-        this.ApMaterno = ApMaterno;
+    public void setApellido_Materno(String apellido_Materno) {
+        this.apellido_Materno = apellido_Materno;
     }
 
     public String getNombres() {
-        return Nombres;
+        return nombres;
     }
 
-    public void setNombres(String Nombres) {
-        this.Nombres = Nombres;
+    public void setNombres(String nombres) {
+        this.nombres = nombres;
     }
 
     public String getDireccion() {
-        return Direccion;
+        return direccion;
     }
 
-    public void setDireccion(String Direccion) {
-        this.Direccion = Direccion;
-    }
-
-    public String getDepartamento() {
-        return Departamento;
-    }
-
-    public void setDepartamento(String Departamento) {
-        this.Departamento = Departamento;
-    }
-
-    public String getGenero() {
-        return Genero;
-    }
-
-    public void setGenero(String Genero) {
-        this.Genero = Genero;
-    }
-
-    public String getFecha_Nac() {
-        return Fecha_Nac;
-    }
-
-    public void setFecha_Nac(String Fecha_Nac) {
-        this.Fecha_Nac = Fecha_Nac;
+    public void setDireccion(String direccion) {
+        this.direccion = direccion;
     }
 
     public String getDistrito() {
-        return Distrito;
+        return distrito;
     }
 
-    public void setDistrito(String Distrito) {
-        this.Distrito = Distrito;
+    public void setDistrito(String distrito) {
+        this.distrito = distrito;
     }
+
+    public String getProvincia() {
+        return provincia;
+    }
+
+    public void setProvincia(String provincia) {
+        this.provincia = provincia;
+    }
+
+    public String getDepartamento() {
+        return departamento;
+    }
+
+    public void setDepartamento(String departamento) {
+        this.departamento = departamento;
+    }
+
+    public String getSexo() {
+        return sexo;
+    }
+
+    public void setSexo(String sexo) {
+        this.sexo = sexo;
+    }
+
+    public Date getFecha_Nacimiento() {
+        return fecha_Nacimiento;
+    }
+
+    public void setFecha_Nacimiento(Date fecha_Nacimiento) {
+        this.fecha_Nacimiento = fecha_Nacimiento;
+    }
+
+    
 
     public void agregarEstudiante(Estudiante estudiante) {
         try {
-            String sql = "INSERT INTO Estudiante (Dni, Ap_Paterno, Ap_Materno, Nombres, Direccion, Departamento, Distrito, Genero, Fecha_Nac) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+            String sql = "INSERT INTO Estudiante (dni, apellido_Paterno, apellido_Materno, nombres, direccion, distrito, provincia, departamento, sexo, fecha_Nacimiento) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
             try (PreparedStatement statement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
                 statement.setString(1, estudiante.getDni());
-                statement.setString(2, estudiante.getApPaterno());
-                statement.setString(3, estudiante.getApMaterno());
+                statement.setString(2,estudiante.getApellido_Paterno());
+                statement.setString(3,estudiante.getApellido_Materno());
                 statement.setString(4, estudiante.getNombres());
                 statement.setString(5, estudiante.getDireccion());
-                statement.setString(6, estudiante.getDepartamento());
-                statement.setString(7, estudiante.getDistrito());
-                statement.setString(8, estudiante.getGenero());
-                statement.setString(9, estudiante.getFecha_Nac());
+                statement.setString(6, estudiante.getDistrito());
+                statement.setString(7, estudiante.getProvincia());
+                statement.setString(8, estudiante.getDepartamento());
+                statement.setString(9, estudiante.getSexo());
+                statement.setDate(10, estudiante.getFecha_Nacimiento());
                 statement.executeUpdate();
 
                 try (ResultSet generatedKeys = statement.getGeneratedKeys()) {
                     if (generatedKeys.next()) {
-                        estudiante.setIdEstudiante(generatedKeys.getInt(1));
+                        estudiante.setId_Estudiante(generatedKeys.getInt(1));
                     }
                 }
             }
@@ -154,18 +176,18 @@ public class Estudiante {
 
     public void actualizarEstudiante(Estudiante estudiante) {
         try {
-            String sql = "UPDATE Estudiante SET Dni = ?, Ap_Paterno = ?, Ap_Materno = ?, Nombres = ?, Direccion = ?, Departamento = ?, Distrito = ?, Genero = ?, Fecha_Nac = ? WHERE Id_Estudiante = ?";
+            String sql = "UPDATE Estudiante SET dni = ?, apellido_Paterno = ?, apellido_Materno = ?, nombres = ?, direccion = ?, distrito = ?,provincia = ?, departamento = ?,  sexo = ?, fecha_Nacimiento = ? WHERE id_Estudiante = ?";
             try (PreparedStatement statement = connection.prepareStatement(sql)) {
                 statement.setString(1, estudiante.getDni());
-                statement.setString(2, estudiante.getApPaterno());
-                statement.setString(3, estudiante.getApMaterno());
+                statement.setString(2,estudiante.getApellido_Paterno());
+                statement.setString(3,estudiante.getApellido_Materno());
                 statement.setString(4, estudiante.getNombres());
                 statement.setString(5, estudiante.getDireccion());
-                statement.setString(6, estudiante.getDepartamento());
-                statement.setString(7, estudiante.getDistrito());
-                statement.setString(8, estudiante.getGenero());
-                statement.setString(9, estudiante.getFecha_Nac());
-                statement.setInt(10, estudiante.getIdEstudiante());
+                statement.setString(6, estudiante.getDistrito());
+                statement.setString(7, estudiante.getProvincia());
+                statement.setString(8, estudiante.getDepartamento());
+                statement.setString(9, estudiante.getSexo());
+                statement.setDate(10, estudiante.getFecha_Nacimiento());
                 statement.executeUpdate();
             }
         } catch (SQLException e) {
@@ -175,7 +197,7 @@ public class Estudiante {
 
     public void eliminarEstudiante(int idEstudiante) {
         try {
-            String sql = "DELETE FROM Estudiante WHERE Id_Estudiante = ?";
+            String sql = "DELETE FROM Estudiante WHERE id_Estudiante = ?";
             try (PreparedStatement statement = connection.prepareStatement(sql)) {
                 statement.setInt(1, idEstudiante);
                 statement.executeUpdate();
@@ -188,23 +210,23 @@ public class Estudiante {
     public Estudiante obtenerEstudiante(int idEstudiante) {
         Estudiante estudiante = null;
         try {
-            String sql = "SELECT * FROM Estudiante WHERE Id_Estudiante = ?";
+            String sql = "SELECT * FROM Estudiante WHERE id_Estudiante = ?";
             try (PreparedStatement statement = connection.prepareStatement(sql)) {
                 statement.setInt(1, idEstudiante);
                 try (ResultSet resultSet = statement.executeQuery()) {
                     if (resultSet.next()) {
                         estudiante = new Estudiante();
-                        estudiante.setIdEstudiante(resultSet.getInt("Id_Estudiante"));
-                        estudiante.setDni(resultSet.getString("Dni"));
-                        estudiante.setApPaterno(resultSet.getString("Ap_Paterno"));
-                        estudiante.setApMaterno(resultSet.getString("Ap_Materno"));
-                        estudiante.setNombres(resultSet.getString("Nombres"));
-                        estudiante.setDireccion(resultSet.getString("Direccion"));
-                        estudiante.setDepartamento(resultSet.getString("Departamento"));
-                        estudiante.setDistrito(resultSet.getString("Distrito"));
-                        estudiante.setNombres(resultSet.getString("Nombres"));
-                        estudiante.setGenero(resultSet.getString("Genero"));
-                        estudiante.setFecha_Nac(resultSet.getString("Fecha_Nac"));
+                        estudiante.setId_Estudiante(resultSet.getInt("id_Estudiante"));
+                        estudiante.setDni(resultSet.getString("dni"));
+                        estudiante.setApellido_Paterno(resultSet.getString("apellido_Paterno"));
+                        estudiante.setApellido_Materno(resultSet.getString("apellido_Materno"));
+                        estudiante.setNombres(resultSet.getString("nombres"));
+                        estudiante.setDireccion(resultSet.getString("direccion"));
+                        estudiante.setDistrito(resultSet.getString("distrito"));
+                        estudiante.setDistrito(resultSet.getString("provincia"));
+                        estudiante.setDepartamento(resultSet.getString("departamento"));
+                        estudiante.setSexo(resultSet.getString("sexo"));
+                        estudiante.setFecha_Nacimiento(resultSet.getDate("fecha_Nacimiento"));
                     }
                 }
             }
@@ -217,23 +239,23 @@ public class Estudiante {
     public Estudiante obtenerEstudiantePorDni(String dni) {
         Estudiante estudiante = null;
         try {
-            String sql = "SELECT * FROM Estudiante WHERE Dni = ?";
+            String sql = "SELECT * FROM Estudiante WHERE dni = ?";
             try (PreparedStatement statement = connection.prepareStatement(sql)) {
                 statement.setString(1, dni);
                 try (ResultSet resultSet = statement.executeQuery()) {
                     if (resultSet.next()) {
                         estudiante = new Estudiante();
-                        estudiante.setIdEstudiante(resultSet.getInt("Id_Estudiante"));
-                        estudiante.setDni(resultSet.getString("Dni"));
-                        estudiante.setApPaterno(resultSet.getString("Ap_Paterno"));
-                        estudiante.setApMaterno(resultSet.getString("Ap_Materno"));
-                        estudiante.setNombres(resultSet.getString("Nombres"));
-                        estudiante.setDireccion(resultSet.getString("Direccion"));
-                        estudiante.setDepartamento(resultSet.getString("Departamento"));
-                        estudiante.setDistrito(resultSet.getString("Distrito"));
-                        estudiante.setNombres(resultSet.getString("Nombres"));
-                        estudiante.setGenero(resultSet.getString("Genero"));
-                        estudiante.setFecha_Nac(resultSet.getString("Fecha_Nac"));
+                        estudiante.setId_Estudiante(resultSet.getInt("id_Estudiante"));
+                        estudiante.setDni(resultSet.getString("dni"));
+                        estudiante.setApellido_Paterno(resultSet.getString("apellido_Paterno"));
+                        estudiante.setApellido_Materno(resultSet.getString("apellido_Materno"));
+                        estudiante.setNombres(resultSet.getString("nombres"));
+                        estudiante.setDireccion(resultSet.getString("direccion"));
+                        estudiante.setDistrito(resultSet.getString("distrito"));
+                        estudiante.setDistrito(resultSet.getString("provincia"));
+                        estudiante.setDepartamento(resultSet.getString("departamento"));
+                        estudiante.setSexo(resultSet.getString("sexo"));
+                        estudiante.setFecha_Nacimiento(resultSet.getDate("fecha_Nacimiento"));
                     }
                 }
             }
@@ -250,17 +272,17 @@ public class Estudiante {
             try (Statement statement = connection.createStatement(); ResultSet resultSet = statement.executeQuery(sql)) {
                 while (resultSet.next()) {
                     Estudiante estudiante = new Estudiante();
-                    estudiante.setIdEstudiante(resultSet.getInt("Id_Estudiante"));
-                    estudiante.setDni(resultSet.getString("Dni"));
-                    estudiante.setApPaterno(resultSet.getString("Ap_Paterno"));
-                    estudiante.setApMaterno(resultSet.getString("Ap_Materno"));
-                    estudiante.setNombres(resultSet.getString("Nombres"));
-                    estudiante.setDireccion(resultSet.getString("Direccion"));
-                    estudiante.setDepartamento(resultSet.getString("Departamento"));
-                    estudiante.setDistrito(resultSet.getString("Distrito"));
-                    estudiante.setNombres(resultSet.getString("Nombres"));
-                    estudiante.setGenero(resultSet.getString("Genero"));
-                    estudiante.setFecha_Nac(resultSet.getString("Fecha_Nac"));
+                    estudiante.setId_Estudiante(resultSet.getInt("id_Estudiante"));
+                        estudiante.setDni(resultSet.getString("dni"));
+                        estudiante.setApellido_Paterno(resultSet.getString("apellido_Paterno"));
+                        estudiante.setApellido_Materno(resultSet.getString("apellido_Materno"));
+                        estudiante.setNombres(resultSet.getString("nombres"));
+                        estudiante.setDireccion(resultSet.getString("direccion"));
+                        estudiante.setDistrito(resultSet.getString("distrito"));
+                        estudiante.setDistrito(resultSet.getString("provincia"));
+                        estudiante.setDepartamento(resultSet.getString("departamento"));
+                        estudiante.setSexo(resultSet.getString("sexo"));
+                        estudiante.setFecha_Nacimiento(resultSet.getDate("fecha_Nacimiento"));
                     estudiantes.add(estudiante);
                 }
             }

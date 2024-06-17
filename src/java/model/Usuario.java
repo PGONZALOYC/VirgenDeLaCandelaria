@@ -19,8 +19,10 @@ public class Usuario {
     private Connection connection;
     
     private String Id_Usuario;
+    private String nombre;
     private String correo;
     private String contraseña;
+    private String fecha_Ultima_Sesion;
 
     public Usuario() {
         try {
@@ -31,10 +33,21 @@ public class Usuario {
         }
     }
 
-    public Usuario(String Id_Usuario, String correo, String contraseña) {
+    public Usuario(Connection connection, String Id_Usuario, String nombre, String correo, String contraseña, String fecha_Ultima_Sesion) {
+        this.connection = connection;
         this.Id_Usuario = Id_Usuario;
+        this.nombre = nombre;
         this.correo = correo;
         this.contraseña = contraseña;
+        this.fecha_Ultima_Sesion = fecha_Ultima_Sesion;
+    }
+
+    public Connection getConnection() {
+        return connection;
+    }
+
+    public void setConnection(Connection connection) {
+        this.connection = connection;
     }
 
     public String getId_Usuario() {
@@ -43,6 +56,14 @@ public class Usuario {
 
     public void setId_Usuario(String Id_Usuario) {
         this.Id_Usuario = Id_Usuario;
+    }
+
+    public String getNombre() {
+        return nombre;
+    }
+
+    public void setNombre(String nombre) {
+        this.nombre = nombre;
     }
 
     public String getCorreo() {
@@ -59,6 +80,14 @@ public class Usuario {
 
     public void setContraseña(String contraseña) {
         this.contraseña = contraseña;
+    }
+
+    public String getFecha_Ultima_Sesion() {
+        return fecha_Ultima_Sesion;
+    }
+
+    public void setFecha_Ultima_Sesion(String fecha_Ultima_Sesion) {
+        this.fecha_Ultima_Sesion = fecha_Ultima_Sesion;
     }
 
     public int autoriza(String usr, String psw) throws ClassNotFoundException {
