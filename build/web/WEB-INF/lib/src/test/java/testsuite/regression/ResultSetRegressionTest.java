@@ -1,30 +1,21 @@
 /*
- * Copyright (c) 2002, 2023, Oracle and/or its affiliates.
+ * Copyright (c) 2002, 2024, Oracle and/or its affiliates.
  *
- * This program is free software; you can redistribute it and/or modify it under
- * the terms of the GNU General Public License, version 2.0, as published by the
- * Free Software Foundation.
+ * This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License, version 2.0, as published by
+ * the Free Software Foundation.
  *
- * This program is also distributed with certain software (including but not
- * limited to OpenSSL) that is licensed under separate terms, as designated in a
- * particular file or component or in included license documentation. The
- * authors of MySQL hereby grant you an additional permission to link the
- * program and your derivative works with the separately licensed software that
- * they have included with MySQL.
+ * This program is designed to work with certain software that is licensed under separate terms, as designated in a particular file or component or in
+ * included license documentation. The authors of MySQL hereby grant you an additional permission to link the program and your derivative works with the
+ * separately licensed software that they have either included with the program or referenced in the documentation.
  *
- * Without limiting anything contained in the foregoing, this file, which is
- * part of MySQL Connector/J, is also subject to the Universal FOSS Exception,
- * version 1.0, a copy of which can be found at
- * http://oss.oracle.com/licenses/universal-foss-exception.
+ * Without limiting anything contained in the foregoing, this file, which is part of MySQL Connector/J, is also subject to the Universal FOSS Exception,
+ * version 1.0, a copy of which can be found at http://oss.oracle.com/licenses/universal-foss-exception.
  *
- * This program is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- * FOR A PARTICULAR PURPOSE. See the GNU General Public License, version 2.0,
- * for more details.
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License, version 2.0, for more details.
  *
- * You should have received a copy of the GNU General Public License along with
- * this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301  USA
+ * You should have received a copy of the GNU General Public License along with this program; if not, write to the Free Software Foundation, Inc.,
+ * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
 package testsuite.regression;
@@ -1986,6 +1977,9 @@ public class ResultSetRegressionTest extends BaseTestCase {
         StringBuilder insertValues = new StringBuilder();
 
         while (this.rs.next()) {
+            if (this.rs.getString("TYPE_NAME").equals("VECTOR") && !versionMeetsMinimum(9, 0)) {
+                continue;
+            }
             String dataType = this.rs.getString("TYPE_NAME").toUpperCase();
 
             boolean wasDateTime = false;
@@ -2012,6 +2006,8 @@ public class ResultSetRegressionTest extends BaseTestCase {
             } else if (dataType.indexOf("DATE") != -1 || dataType.indexOf("TIME") != -1) {
                 insertValues.append("NOW()");
                 wasDateTime = true;
+            } else if (dataType.indexOf("VECTOR") != -1) {
+                insertValues.append("0x00000000");
             } else {
                 insertValues.append("0");
             }
@@ -8198,6 +8194,53 @@ public class ResultSetRegressionTest extends BaseTestCase {
             assertEquals(Timestamp.class, testRowSet2.getTimestamp(1).getClass()); // Expected behavior.
             assertEquals(Timestamp.class, testRowSet2.getTimestamp(2).getClass());
         }
+    }
+
+    /**
+     * Tests fix for Bug#113129 (Bug#36043145), setting the FetchSize on a Statement object does not affect.
+     *
+     * @throws Exception
+     */
+    @Test
+    void testBug113129() throws Exception {
+        Statement testStmt = this.conn.createStatement();
+        int fetchSizeToTest1 = 5;
+        int fetchSizeToTest2 = 10;
+
+        // executeQuery returns a different ResultSet when executing a ping query, need to test it too.
+        testStmt.setFetchSize(fetchSizeToTest1);
+        this.rs = testStmt.executeQuery("/* ping */");
+        assertEquals(fetchSizeToTest1, this.rs.getFetchSize());
+        this.rs.setFetchSize(fetchSizeToTest2);
+        assertEquals(fetchSizeToTest2, this.rs.getFetchSize());
+
+        // Static rows.
+        testStmt.setFetchSize(fetchSizeToTest1);
+        this.rs = testStmt.executeQuery("SELECT 1");
+        assertEquals(fetchSizeToTest1, this.rs.getFetchSize());
+        this.rs.setFetchSize(fetchSizeToTest2);
+        assertEquals(fetchSizeToTest2, this.rs.getFetchSize());
+        this.rs.next();
+
+        // Dynamic fetch.
+        testStmt.setFetchSize(Integer.MIN_VALUE);
+        this.rs = testStmt.executeQuery("SELECT 1");
+        this.rs.next();
+        assertEquals(Integer.MIN_VALUE, this.rs.getFetchSize());
+        this.rs.setFetchSize(fetchSizeToTest2);
+        assertEquals(fetchSizeToTest2, this.rs.getFetchSize());
+
+        // Cursor based.
+        Properties props = new Properties();
+        props.setProperty(PropertyKey.useCursorFetch.getKeyName(), "True");
+        Connection cursorConn = getConnectionWithProps(props);
+        testStmt = cursorConn.createStatement();
+        testStmt.setFetchSize(fetchSizeToTest1);
+        this.rs = testStmt.executeQuery("SELECT 1");
+        assertEquals(fetchSizeToTest1, this.rs.getFetchSize());
+        this.rs.setFetchSize(fetchSizeToTest2);
+        assertEquals(fetchSizeToTest2, this.rs.getFetchSize());
+        this.rs.next();
     }
 
 }

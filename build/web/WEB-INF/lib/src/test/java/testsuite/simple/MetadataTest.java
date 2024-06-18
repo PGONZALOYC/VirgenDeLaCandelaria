@@ -1,30 +1,21 @@
 /*
- * Copyright (c) 2002, 2023, Oracle and/or its affiliates.
+ * Copyright (c) 2002, 2024, Oracle and/or its affiliates.
  *
- * This program is free software; you can redistribute it and/or modify it under
- * the terms of the GNU General Public License, version 2.0, as published by the
- * Free Software Foundation.
+ * This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License, version 2.0, as published by
+ * the Free Software Foundation.
  *
- * This program is also distributed with certain software (including but not
- * limited to OpenSSL) that is licensed under separate terms, as designated in a
- * particular file or component or in included license documentation. The
- * authors of MySQL hereby grant you an additional permission to link the
- * program and your derivative works with the separately licensed software that
- * they have included with MySQL.
+ * This program is designed to work with certain software that is licensed under separate terms, as designated in a particular file or component or in
+ * included license documentation. The authors of MySQL hereby grant you an additional permission to link the program and your derivative works with the
+ * separately licensed software that they have either included with the program or referenced in the documentation.
  *
- * Without limiting anything contained in the foregoing, this file, which is
- * part of MySQL Connector/J, is also subject to the Universal FOSS Exception,
- * version 1.0, a copy of which can be found at
- * http://oss.oracle.com/licenses/universal-foss-exception.
+ * Without limiting anything contained in the foregoing, this file, which is part of MySQL Connector/J, is also subject to the Universal FOSS Exception,
+ * version 1.0, a copy of which can be found at http://oss.oracle.com/licenses/universal-foss-exception.
  *
- * This program is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- * FOR A PARTICULAR PURPOSE. See the GNU General Public License, version 2.0,
- * for more details.
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License, version 2.0, for more details.
  *
- * You should have received a copy of the GNU General Public License along with
- * this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301  USA
+ * You should have received a copy of the GNU General Public License along with this program; if not, write to the Free Software Foundation, Inc.,
+ * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
 package testsuite.simple;
@@ -58,6 +49,7 @@ import java.util.function.Supplier;
 
 import org.junit.jupiter.api.Test;
 
+import com.mysql.cj.MysqlType;
 import com.mysql.cj.Query;
 import com.mysql.cj.ServerVersion;
 import com.mysql.cj.conf.PropertyDefinitions;
@@ -1894,6 +1886,42 @@ public class MetadataTest extends BaseTestCase {
         assertEquals(0, rs1.getShort("DECIMAL_DIGITS"));
         assertEquals(DatabaseMetaData.bestRowNotPseudo, rs1.getShort("PSEUDO_COLUMN"));
         assertFalse(rs1.next());
+    }
+
+    /**
+     * WL#16174: Support for VECTOR data type
+     *
+     * This test checks that the type of the VECTOR column is reported back as MysqlType.VECTOR. VECTOR support was added in MySQL 9.0.0.
+     *
+     * @throws Exception
+     */
+    @Test
+    public void testVectorColumnType() throws Exception {
+        assumeTrue(versionMeetsMinimum(9, 0), "MySQL 9.0.0+ is needed to run this test.");
+        createTable("testVectorColumnType", "(v VECTOR)");
+        DatabaseMetaData md = this.conn.getMetaData();
+        this.rs = md.getColumns(null, null, "testVectorColumnType", "v");
+        this.rs.next();
+        assertEquals(MysqlType.VECTOR.getName().toUpperCase(), this.rs.getString("TYPE_NAME").toUpperCase());
+    }
+
+    /**
+     * WL#16174: Support for VECTOR data type
+     *
+     * This test checks that the result set metadata reports back the VECTOR column as MysqlType.VECTOR. VECTOR support was added in MySQL 9.0.0.
+     *
+     * @throws Exception
+     */
+    @Test
+    public void testVectorResultSetType() throws Exception {
+        assumeTrue(versionMeetsMinimum(9, 0), "MySQL 9.0.0+ is needed to run this test.");
+        createTable("testVectorResultSetType", "(v VECTOR)");
+        // 0xC3F5484014AE0F41 is the HEX representation for the vector [3.14000e+00,8.98000e+00]
+        this.stmt.execute("INSERT INTO testVectorResultSetType VALUES(0xC3F5484014AE0F41)");
+        this.rs = this.stmt.executeQuery("SELECT v FROM testVectorResultSetType");
+        this.rs.next();
+        ResultSetMetaData md = this.rs.getMetaData();
+        assertEquals(MysqlType.VECTOR.getName().toUpperCase(), md.getColumnTypeName(1).toUpperCase());
     }
 
 }

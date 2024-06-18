@@ -1,30 +1,21 @@
 /*
- * Copyright (c) 2017, 2023, Oracle and/or its affiliates.
+ * Copyright (c) 2017, 2024, Oracle and/or its affiliates.
  *
- * This program is free software; you can redistribute it and/or modify it under
- * the terms of the GNU General Public License, version 2.0, as published by the
- * Free Software Foundation.
+ * This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License, version 2.0, as published by
+ * the Free Software Foundation.
  *
- * This program is also distributed with certain software (including but not
- * limited to OpenSSL) that is licensed under separate terms, as designated in a
- * particular file or component or in included license documentation. The
- * authors of MySQL hereby grant you an additional permission to link the
- * program and your derivative works with the separately licensed software that
- * they have included with MySQL.
+ * This program is designed to work with certain software that is licensed under separate terms, as designated in a particular file or component or in
+ * included license documentation. The authors of MySQL hereby grant you an additional permission to link the program and your derivative works with the
+ * separately licensed software that they have either included with the program or referenced in the documentation.
  *
- * Without limiting anything contained in the foregoing, this file, which is
- * part of MySQL Connector/J, is also subject to the Universal FOSS Exception,
- * version 1.0, a copy of which can be found at
- * http://oss.oracle.com/licenses/universal-foss-exception.
+ * Without limiting anything contained in the foregoing, this file, which is part of MySQL Connector/J, is also subject to the Universal FOSS Exception,
+ * version 1.0, a copy of which can be found at http://oss.oracle.com/licenses/universal-foss-exception.
  *
- * This program is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- * FOR A PARTICULAR PURPOSE. See the GNU General Public License, version 2.0,
- * for more details.
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License, version 2.0, for more details.
  *
- * You should have received a copy of the GNU General Public License along with
- * this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301  USA
+ * You should have received a copy of the GNU General Public License along with this program; if not, write to the Free Software Foundation, Inc.,
+ * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
 package com.mysql.cj;
@@ -50,6 +41,7 @@ public class QueryInfo {
 
     private static final String INSERT_STATEMENT = "INSERT";
     private static final String REPLACE_STATEMENT = "REPLACE";
+    private static final String MULTIPLE_QUERIES_TAG = "(multiple queries)";
 
     private static final String VALUE_CLAUSE = "VALUE";
     private static final String AS_CLAUSE = "AS";
@@ -64,6 +56,7 @@ public class QueryInfo {
     private int queryLength = 0;
     private int queryStartPos = 0;
     private char statementFirstChar = Character.MIN_VALUE;
+    private String statementKeyword = "";
     private int batchCount = 1;
     private int numberOfPlaceholders = 0;
     private int numberOfQueries = 0;
@@ -111,17 +104,23 @@ public class QueryInfo {
         } else {
             this.numberOfQueries = 1;
             this.statementFirstChar = Character.toUpperCase(strInspector.getChar());
+
+            // Capture the statement keyword.
+            int endStatementKeyword = 0;
+            int nextChar = this.queryStartPos;
+            StringBuilder sbStatementKeyword = new StringBuilder();
+            do {
+                sbStatementKeyword.append(Character.toUpperCase(strInspector.getChar()));
+                endStatementKeyword = nextChar + 1;
+                strInspector.incrementPosition();
+                nextChar = strInspector.indexOfNextChar();
+            } while (nextChar == endStatementKeyword);
+            this.statementKeyword = sbStatementKeyword.toString();
         }
 
         // Only INSERT and REPLACE statements support multi-values clause rewriting.
-        boolean isInsert = strInspector.matchesIgnoreCase(INSERT_STATEMENT) != -1;
-        if (isInsert) {
-            strInspector.incrementPosition(INSERT_STATEMENT.length()); // Advance to the end of "INSERT".
-        }
-        boolean isReplace = !isInsert && strInspector.matchesIgnoreCase(REPLACE_STATEMENT) != -1;
-        if (isReplace) {
-            strInspector.incrementPosition(REPLACE_STATEMENT.length()); // Advance to the end of "REPLACE".
-        }
+        boolean isInsert = INSERT_STATEMENT.equalsIgnoreCase(this.statementKeyword);
+        boolean isReplace = !isInsert && REPLACE_STATEMENT.equalsIgnoreCase(this.statementKeyword);
 
         // Check if the statement has potential to be rewritten as a multi-values clause statement, i.e., if it is an INSERT or REPLACE statement and
         // 'rewriteBatchedStatements' is enabled.
@@ -347,6 +346,10 @@ public class QueryInfo {
             int length = end - begin;
             this.staticSqlParts[i] = StringUtils.getBytes(this.sql, begin, length, this.encoding);
         }
+
+        if (this.numberOfQueries > 1) {
+            this.statementKeyword = MULTIPLE_QUERIES_TAG;
+        }
     }
 
     /**
@@ -367,6 +370,7 @@ public class QueryInfo {
         this.queryLength = 0;
         this.queryStartPos = this.baseQueryInfo.queryStartPos;
         this.statementFirstChar = this.baseQueryInfo.statementFirstChar;
+        this.statementKeyword = this.baseQueryInfo.statementKeyword;
         this.batchCount = batchCount;
         this.numberOfPlaceholders = this.baseQueryInfo.numberOfPlaceholders * this.batchCount;
         this.numberOfQueries = 1;
@@ -465,6 +469,16 @@ public class QueryInfo {
     public char getFirstStmtChar() {
         /* TODO: First char based logic is questionable. Consider replacing by statement check. */
         return this.baseQueryInfo.statementFirstChar;
+    }
+
+    /**
+     * Returns the statement keyword from the query used to build this {@link QueryInfo}.
+     *
+     * @return
+     *         the statement keyword
+     */
+    public String getStatementKeyword() {
+        return this.statementKeyword;
     }
 
     /**
@@ -592,6 +606,32 @@ public class QueryInfo {
             return Character.MIN_VALUE;
         }
         return Character.toUpperCase(sql.charAt(statementKeywordPos));
+    }
+
+    /**
+     * Finds and returns the statement keyword from the specified SQL, skipping comments and quoted text.
+     *
+     * @param sql
+     *            the query to search
+     * @param noBackslashEscapes
+     *            whether backslash escapes are disabled or not
+     * @return the statement keyword of the query
+     */
+    public static String getStatementKeyword(String sql, boolean noBackslashEscapes) {
+        StringInspector strInspector = new StringInspector(sql, 0, OPENING_MARKERS, CLOSING_MARKERS, OVERRIDING_MARKERS,
+                noBackslashEscapes ? SearchMode.__MRK_COM_MYM_HNT_WS : SearchMode.__BSE_MRK_COM_MYM_HNT_WS);
+        int begin = strInspector.indexOfNextAlphanumericChar();
+        if (begin == -1) {
+            return "";
+        }
+        int end = 0;
+        int nextChar = begin;
+        do {
+            end = nextChar + 1;
+            strInspector.incrementPosition();
+            nextChar = strInspector.indexOfNextChar();
+        } while (nextChar == end);
+        return sql.substring(begin, end).toUpperCase();
     }
 
     /**

@@ -1,30 +1,21 @@
 /*
- * Copyright (c) 2002, 2023, Oracle and/or its affiliates.
+ * Copyright (c) 2002, 2024, Oracle and/or its affiliates.
  *
- * This program is free software; you can redistribute it and/or modify it under
- * the terms of the GNU General Public License, version 2.0, as published by the
- * Free Software Foundation.
+ * This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License, version 2.0, as published by
+ * the Free Software Foundation.
  *
- * This program is also distributed with certain software (including but not
- * limited to OpenSSL) that is licensed under separate terms, as designated in a
- * particular file or component or in included license documentation. The
- * authors of MySQL hereby grant you an additional permission to link the
- * program and your derivative works with the separately licensed software that
- * they have included with MySQL.
+ * This program is designed to work with certain software that is licensed under separate terms, as designated in a particular file or component or in
+ * included license documentation. The authors of MySQL hereby grant you an additional permission to link the program and your derivative works with the
+ * separately licensed software that they have either included with the program or referenced in the documentation.
  *
- * Without limiting anything contained in the foregoing, this file, which is
- * part of MySQL Connector/J, is also subject to the Universal FOSS Exception,
- * version 1.0, a copy of which can be found at
- * http://oss.oracle.com/licenses/universal-foss-exception.
+ * Without limiting anything contained in the foregoing, this file, which is part of MySQL Connector/J, is also subject to the Universal FOSS Exception,
+ * version 1.0, a copy of which can be found at http://oss.oracle.com/licenses/universal-foss-exception.
  *
- * This program is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- * FOR A PARTICULAR PURPOSE. See the GNU General Public License, version 2.0,
- * for more details.
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License, version 2.0, for more details.
  *
- * You should have received a copy of the GNU General Public License along with
- * this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301  USA
+ * You should have received a copy of the GNU General Public License along with this program; if not, write to the Free Software Foundation, Inc.,
+ * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
 package com.mysql.cj.protocol.a.result;
@@ -33,6 +24,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.mysql.cj.Messages;
+import com.mysql.cj.Session;
 import com.mysql.cj.exceptions.ExceptionFactory;
 import com.mysql.cj.protocol.ColumnDefinition;
 import com.mysql.cj.protocol.Resultset.Concurrency;
@@ -42,6 +34,10 @@ import com.mysql.cj.protocol.a.BinaryRowFactory;
 import com.mysql.cj.protocol.a.NativeMessageBuilder;
 import com.mysql.cj.protocol.a.NativeProtocol;
 import com.mysql.cj.result.Row;
+import com.mysql.cj.telemetry.TelemetryAttribute;
+import com.mysql.cj.telemetry.TelemetryScope;
+import com.mysql.cj.telemetry.TelemetrySpan;
+import com.mysql.cj.telemetry.TelemetrySpanName;
 
 /**
  * Model for result set data backed by a cursor (see http://dev.mysql.com/doc/refman/5.7/en/cursors.html and
@@ -203,53 +199,70 @@ public class ResultsetRowsCursor extends AbstractResultsetRows implements Result
         }
 
         synchronized (this.owner.getSyncMutex()) {
-            try {
-                boolean oldFirstFetchCompleted = this.firstFetchCompleted;
+            Session session = this.owner.getSession();
+            TelemetrySpan span = session.getTelemetryHandler().startSpan(TelemetrySpanName.STMT_FETCH_PREPARED);
+            try (TelemetryScope scope = span.makeCurrent()) {
+                span.setAttribute(TelemetryAttribute.DB_NAME, session.getHostInfo().getDatabase());
+                span.setAttribute(TelemetryAttribute.DB_OPERATION, TelemetryAttribute.OPERATION_SET);
+                span.setAttribute(TelemetryAttribute.DB_STATEMENT, TelemetryAttribute.OPERATION_SET + TelemetryAttribute.STATEMENT_SUFFIX);
+                span.setAttribute(TelemetryAttribute.DB_SYSTEM, TelemetryAttribute.DB_SYSTEM_DEFAULT);
+                span.setAttribute(TelemetryAttribute.DB_USER, session.getHostInfo().getUser());
+                span.setAttribute(TelemetryAttribute.THREAD_ID, Thread.currentThread().getId());
+                span.setAttribute(TelemetryAttribute.THREAD_NAME, Thread.currentThread().getName());
 
-                if (!this.firstFetchCompleted) {
-                    this.firstFetchCompleted = true;
-                }
+                try {
+                    boolean oldFirstFetchCompleted = this.firstFetchCompleted;
 
-                int numRowsToFetch = this.owner.getOwnerFetchSize();
-
-                if (numRowsToFetch == 0) {
-                    numRowsToFetch = this.owner.getOwningStatementFetchSize();
-                }
-
-                if (numRowsToFetch == Integer.MIN_VALUE) {
-                    // Handle the case where the user used 'old' streaming result sets
-
-                    numRowsToFetch = 1;
-                }
-
-                if (this.fetchedRows == null) {
-                    this.fetchedRows = new ArrayList<>(numRowsToFetch);
-                } else {
-                    this.fetchedRows.clear();
-                }
-
-                // TODO this is not the right place for this code, should be in protocol
-                this.protocol.sendCommand(
-                        this.commandBuilder.buildComStmtFetch(this.protocol.getSharedSendPacket(), this.owner.getOwningStatementServerId(), numRowsToFetch),
-                        true, 0);
-
-                Row row = null;
-
-                while ((row = this.protocol.read(ResultsetRow.class, this.rowFactory)) != null) {
-                    this.fetchedRows.add(row);
-                }
-
-                this.currentPositionInFetchedRows = BEFORE_START_OF_ROWS;
-
-                if (this.protocol.getServerSession().isLastRowSent()) {
-                    this.lastRowFetched = true;
-
-                    if (!oldFirstFetchCompleted && this.fetchedRows.size() == 0) {
-                        this.wasEmpty = true;
+                    if (!this.firstFetchCompleted) {
+                        this.firstFetchCompleted = true;
                     }
+
+                    int numRowsToFetch = this.owner.getOwnerFetchSize();
+
+                    if (numRowsToFetch == 0) {
+                        numRowsToFetch = this.owner.getOwningStatementFetchSize();
+                    }
+
+                    if (numRowsToFetch == Integer.MIN_VALUE) {
+                        // Handle the case where the user used 'old' streaming result sets
+
+                        numRowsToFetch = 1;
+                    }
+
+                    if (this.fetchedRows == null) {
+                        this.fetchedRows = new ArrayList<>(numRowsToFetch);
+                    } else {
+                        this.fetchedRows.clear();
+                    }
+
+                    // TODO this is not the right place for this code, should be in protocol
+                    this.protocol.sendCommand(
+                            this.commandBuilder.buildComStmtFetch(this.protocol.getSharedSendPacket(), this.owner.getOwningStatementServerId(), numRowsToFetch),
+                            true, 0);
+
+                    Row row = null;
+
+                    while ((row = this.protocol.read(ResultsetRow.class, this.rowFactory)) != null) {
+                        this.fetchedRows.add(row);
+                    }
+
+                    this.currentPositionInFetchedRows = BEFORE_START_OF_ROWS;
+
+                    if (this.protocol.getServerSession().isLastRowSent()) {
+                        this.lastRowFetched = true;
+
+                        if (!oldFirstFetchCompleted && this.fetchedRows.size() == 0) {
+                            this.wasEmpty = true;
+                        }
+                    }
+                } catch (Exception ex) {
+                    throw ExceptionFactory.createException(ex.getMessage(), ex);
                 }
-            } catch (Exception ex) {
-                throw ExceptionFactory.createException(ex.getMessage(), ex);
+            } catch (Throwable t) {
+                span.setError(t);
+                throw t;
+            } finally {
+                span.end();
             }
         }
     }

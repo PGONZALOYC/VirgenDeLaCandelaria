@@ -13,20 +13,21 @@ public class Apoderado {
     
     private Connection connection;
     
-    private int idApoderado;
-    private String Dni;
-    private String estadoVida;
-    private String gradoInstruccion;
-    private String ocupacion;
-    private String Telefono;
-    private String ApPaterno;
-    private String ApMaterno;
-    private String Nombres;
-    private String Direccion;
-    private String Distrito;
-    private String Departamento;
-    private String Genero;
-    private String Fecha_Nac;
+    private int id_Apoderado;
+    private String dni;
+    private String apellido_Paterno;
+    private String apellido_Materno;
+    private String nombres;
+    private String vive;
+    private String grado_Instruccion;
+    private String ocupado;
+    private String telefono;
+    private String direccion;
+    private String distrito;
+    private String provincia;
+    private String departamento;
+    private String sexo;
+    private Date fecha_Nacimiento;
     
     public Apoderado() {
         try {
@@ -37,22 +38,23 @@ public class Apoderado {
         }
     }
 
-    public Apoderado(Connection connection, int idApoderado, String Dni, String estadoVida, String gradoInstruccion, String ocupacion, String Telefono, String ApPaterno, String ApMaterno, String Nombres, String Direccion, String Distrito, String Departamento, String Genero, String Fecha_Nac) {
+    public Apoderado(Connection connection, int id_Apoderado, String dni, String apellido_Paterno, String apellido_Materno, String nombres, String vive, String grado_Instruccion, String ocupado, String telefono, String direccion, String distrito, String provincia, String departamento, String sexo, Date fecha_Nacimiento) {
         this.connection = connection;
-        this.idApoderado = idApoderado;
-        this.Dni = Dni;
-        this.estadoVida = estadoVida;
-        this.gradoInstruccion = gradoInstruccion;
-        this.ocupacion = ocupacion;
-        this.Telefono = Telefono;
-        this.ApPaterno = ApPaterno;
-        this.ApMaterno = ApMaterno;
-        this.Nombres = Nombres;
-        this.Direccion = Direccion;
-        this.Distrito = Distrito;
-        this.Departamento = Departamento;
-        this.Genero = Genero;
-        this.Fecha_Nac = Fecha_Nac;
+        this.id_Apoderado = id_Apoderado;
+        this.dni = dni;
+        this.apellido_Paterno = apellido_Paterno;
+        this.apellido_Materno = apellido_Materno;
+        this.nombres = nombres;
+        this.vive = vive;
+        this.grado_Instruccion = grado_Instruccion;
+        this.ocupado = ocupado;
+        this.telefono = telefono;
+        this.direccion = direccion;
+        this.distrito = distrito;
+        this.provincia = provincia;
+        this.departamento = departamento;
+        this.sexo = sexo;
+        this.fecha_Nacimiento = fecha_Nacimiento;
     }
 
     public Connection getConnection() {
@@ -63,117 +65,126 @@ public class Apoderado {
         this.connection = connection;
     }
 
-    public int getIdApoderado() {
-        return idApoderado;
+    public int getId_Apoderado() {
+        return id_Apoderado;
     }
 
-    public void setIdApoderado(int idApoderado) {
-        this.idApoderado = idApoderado;
+    public void setId_Apoderado(int id_Apoderado) {
+        this.id_Apoderado = id_Apoderado;
     }
 
     public String getDni() {
-        return Dni;
+        return dni;
     }
 
-    public void setDni(String Dni) {
-        this.Dni = Dni;
+    public void setDni(String dni) {
+        this.dni = dni;
     }
 
-    public String getEstadoVida() {
-        return estadoVida;
+    public String getApellido_Paterno() {
+        return apellido_Paterno;
     }
 
-    public void setEstadoVida(String estadoVida) {
-        this.estadoVida = estadoVida;
+    public void setApellido_Paterno(String apellido_Paterno) {
+        this.apellido_Paterno = apellido_Paterno;
     }
 
-    public String getGradoInstruccion() {
-        return gradoInstruccion;
+    public String getApellido_Materno() {
+        return apellido_Materno;
     }
 
-    public void setGradoInstruccion(String gradoInstruccion) {
-        this.gradoInstruccion = gradoInstruccion;
-    }
-
-    public String getOcupacion() {
-        return ocupacion;
-    }
-
-    public void setOcupacion(String ocupacion) {
-        this.ocupacion = ocupacion;
-    }
-
-    public String getTelefono() {
-        return Telefono;
-    }
-
-    public void setTelefono(String Telefono) {
-        this.Telefono = Telefono;
-    }
-
-    public String getApPaterno() {
-        return ApPaterno;
-    }
-
-    public void setApPaterno(String ApPaterno) {
-        this.ApPaterno = ApPaterno;
-    }
-
-    public String getApMaterno() {
-        return ApMaterno;
-    }
-
-    public void setApMaterno(String ApMaterno) {
-        this.ApMaterno = ApMaterno;
+    public void setApellido_Materno(String apellido_Materno) {
+        this.apellido_Materno = apellido_Materno;
     }
 
     public String getNombres() {
-        return Nombres;
+        return nombres;
     }
 
-    public void setNombres(String Nombres) {
-        this.Nombres = Nombres;
+    public void setNombres(String nombres) {
+        this.nombres = nombres;
+    }
+
+    public String getVive() {
+        return vive;
+    }
+
+    public void setVive(String vive) {
+        this.vive = vive;
+    }
+
+    public String getGrado_Instruccion() {
+        return grado_Instruccion;
+    }
+
+    public void setGrado_Instruccion(String grado_Instruccion) {
+        this.grado_Instruccion = grado_Instruccion;
+    }
+
+    public String getOcupado() {
+        return ocupado;
+    }
+
+    public void setOcupado(String ocupado) {
+        this.ocupado = ocupado;
+    }
+
+    public String getTelefono() {
+        return telefono;
+    }
+
+    public void setTelefono(String telefono) {
+        this.telefono = telefono;
     }
 
     public String getDireccion() {
-        return Direccion;
+        return direccion;
     }
 
-    public void setDireccion(String Direccion) {
-        this.Direccion = Direccion;
+    public void setDireccion(String direccion) {
+        this.direccion = direccion;
     }
 
     public String getDistrito() {
-        return Distrito;
+        return distrito;
     }
 
-    public void setDistrito(String Distrito) {
-        this.Distrito = Distrito;
+    public void setDistrito(String distrito) {
+        this.distrito = distrito;
+    }
+
+    public String getProvincia() {
+        return provincia;
+    }
+
+    public void setProvincia(String provincia) {
+        this.provincia = provincia;
     }
 
     public String getDepartamento() {
-        return Departamento;
+        return departamento;
     }
 
-    public void setDepartamento(String Departamento) {
-        this.Departamento = Departamento;
+    public void setDepartamento(String departamento) {
+        this.departamento = departamento;
     }
 
-    public String getGenero() {
-        return Genero;
+    public String getSexo() {
+        return sexo;
     }
 
-    public void setGenero(String Genero) {
-        this.Genero = Genero;
+    public void setSexo(String sexo) {
+        this.sexo = sexo;
     }
 
-    public String getFecha_Nac() {
-        return Fecha_Nac;
+    public Date getFecha_Nacimiento() {
+        return fecha_Nacimiento;
     }
 
-    public void setFecha_Nac(String Fecha_Nac) {
-        this.Fecha_Nac = Fecha_Nac;
+    public void setFecha_Nacimiento(Date fecha_Nacimiento) {
+        this.fecha_Nacimiento = fecha_Nacimiento;
     }
+
     
     // Método de validación de DNI
     public boolean esDniValido(String dni) {
@@ -196,15 +207,18 @@ public class Apoderado {
     }
     
     
+
+
+
     public void agregarApoderado(Apoderado apoderado){
         if (!esDniValido(apoderado.getDni())) {
             throw new IllegalArgumentException("El DNI debe contener exactamente 8 dígitos.");
         }
         
-        if (!esApPaternoValido(apoderado.getApMaterno())) {
+        if (!esApPaternoValido(apoderado.getApellido_Materno())) {
             throw new IllegalArgumentException("El apellido paterno no es válido.");
         }
-        if (!esApMaternoValido(apoderado.getApMaterno())) {
+        if (!esApMaternoValido(apoderado.getApellido_Materno())) {
             throw new IllegalArgumentException("El apellido materno no es válido.");
         }
         if (!esNombresValido(apoderado.getNombres())) {
@@ -212,21 +226,22 @@ public class Apoderado {
         }
         
         try{
-            String sql= "INSERT INTO Apoderado (Dni,Estado_Vida,Grado_Instruccion,Ocupacion,Telefono,Ap_Paterno,Ap_Materno,Nombres,Direccion,Distrito,Departamento,Genero,Fecha_Nac) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)";
+            String sql= "INSERT INTO Apoderado (dni,apellido_Paterno,apellido_Materno,nombres,vive,grado_Instruccion,ocupacion,telefono,direccion,distrito,provincia,departamento,sexo,fecha_Nacimiento) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
             try(PreparedStatement statement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)){
                 statement.setString(1, apoderado.getDni());
-                statement.setString(2, apoderado.getEstadoVida());
-                statement.setString(3, apoderado.getGradoInstruccion());
-                statement.setString(4, apoderado.getOcupacion());
-                statement.setString(5, apoderado.getTelefono());
-                statement.setString(6, apoderado.getApPaterno());
-                statement.setString(7, apoderado.getApMaterno());
-                statement.setString(8, apoderado.getNombres());
+                statement.setString(2, apoderado.getApellido_Paterno());
+                statement.setString(3, apoderado.getApellido_Materno());
+                statement.setString(4, apoderado.getNombres());
+                statement.setString(5, apoderado.getVive());
+                statement.setString(6, apoderado.getGrado_Instruccion());
+                statement.setString(7, apoderado.getOcupado());
+                statement.setString(8, apoderado.getTelefono());
                 statement.setString(9, apoderado.getDireccion());
                 statement.setString(10, apoderado.getDistrito());
-                statement.setString(11, apoderado.getDepartamento());
-                statement.setString(12, apoderado.getGenero());
-                statement.setString(13, apoderado.getFecha_Nac());
+                statement.setString(11, apoderado.getProvincia());
+                statement.setString(12, apoderado.getDepartamento());
+                statement.setString(13, apoderado.getSexo());
+                statement.setDate(14, apoderado.getFecha_Nacimiento());
                 statement.executeUpdate();
             }
         }catch(SQLException e){
@@ -236,22 +251,23 @@ public class Apoderado {
     
     public void actualizarApoderado(Apoderado apoderado){
         try{
-            String sql = "UPDATE Apoderado SET Dni = ?,Estado_Vida = ?,Grado_Instruccion=?, Ocupacion=?,Telefono=?,Ap_Paterno=?,Ap_Materno=?,Nombres=?,Direccion=?, Distrito=?,Departamento=?,Genero=? ,Fecha_Nac=? WHERE ID_Apoderado=?";
-            try(PreparedStatement statement = connection.prepareStatement(sql)){
+            String sql = "UPDATE Apoderado SET dni = ?, apellido_Paterno = ?, apellido_Materno = ?, nombres = ?, vive = ?, grado_Instruccion = ?, ocupacion = ?, telefono = ?, direccion = ?, distrito = ?, provincia = ?, departamento = ?, sexo = ?, fecha_Nacimiento = ?  WHERE Id_apoderado = ? ";
+            try(PreparedStatement statement = connection.prepareStatement(sql)){ 
                 statement.setString(1, apoderado.getDni());
-                statement.setString(2, apoderado.getEstadoVida());
-                statement.setString(3, apoderado.getGradoInstruccion());
-                statement.setString(4, apoderado.getOcupacion());
-                statement.setString(5, apoderado.getTelefono());
-                statement.setString(6, apoderado.getApPaterno());
-                statement.setString(7, apoderado.getApMaterno());
-                statement.setString(8, apoderado.getNombres());
+                statement.setString(2, apoderado.getApellido_Paterno());
+                statement.setString(3, apoderado.getApellido_Materno());
+                statement.setString(4, apoderado.getNombres());
+                statement.setString(5, apoderado.getVive());
+                statement.setString(6, apoderado.getGrado_Instruccion());
+                statement.setString(7, apoderado.getOcupado());
+                statement.setString(8, apoderado.getTelefono());
                 statement.setString(9, apoderado.getDireccion());
                 statement.setString(10, apoderado.getDistrito());
-                statement.setString(11, apoderado.getDepartamento());
-                statement.setString(12, apoderado.getGenero());
-                statement.setString(13, apoderado.getFecha_Nac());
-                statement.setInt(10,apoderado.getIdApoderado());
+                statement.setString(11, apoderado.getProvincia());
+                statement.setString(12, apoderado.getDepartamento());
+                statement.setString(13, apoderado.getSexo());
+                statement.setDate(14, apoderado.getFecha_Nacimiento());
+                statement.setInt(15,apoderado.getId_Apoderado());
                 statement.executeUpdate();
             }
         }catch(SQLException e){
@@ -261,7 +277,7 @@ public class Apoderado {
     
     public void eliminarApoderado(int idApoderado){
         try {
-            String sql="DELETE FROM Apoderado WHERE Id_Apoderado=?";
+            String sql="DELETE FROM Apoderado WHERE Id_apoderado=?";
             try(PreparedStatement statement = connection.prepareStatement(sql)){
                 statement.setInt(1, idApoderado);
                 statement.executeUpdate();
@@ -279,20 +295,21 @@ public class Apoderado {
                 try(ResultSet resultSet = statement.executeQuery()){
                     if(resultSet.next()){
                         apoderado=new Apoderado();
-                        apoderado.setIdApoderado(resultSet.getInt("Id_Apoderado"));
-                        apoderado.setDni(resultSet.getString("Dni"));
-                        apoderado.setEstadoVida(resultSet.getString("Estado_Vida"));
-                        apoderado.setGradoInstruccion(resultSet.getString("Grado_Instruccion"));
-                        apoderado.setOcupacion(resultSet.getString("Ocupacion"));
-                        apoderado.setTelefono(resultSet.getString("Telefono"));
-                        apoderado.setApPaterno(resultSet.getString("Ap_Paterno"));
-                        apoderado.setApMaterno(resultSet.getString("Ap_Materno"));
-                        apoderado.setNombres(resultSet.getString("Nombres"));
-                        apoderado.setDireccion(resultSet.getString("Direccion"));
-                        apoderado.setDistrito(resultSet.getString("Distrito"));
-                        apoderado.setDepartamento(resultSet.getString("Departamento"));
-                        apoderado.setGenero(resultSet.getString("Genero"));
-                        apoderado.setFecha_Nac(resultSet.getString("Fecha_Nac"));
+                        apoderado.setId_Apoderado(resultSet.getInt("id_Apoderado"));
+                        apoderado.setDni(resultSet.getString("dni"));
+                        apoderado.setApellido_Paterno(resultSet.getString("apellido_Paterno"));
+                        apoderado.setApellido_Materno(resultSet.getString("apellido_Materno"));
+                        apoderado.setNombres(resultSet.getString("nombres"));
+                        apoderado.setVive(resultSet.getString("vive"));
+                        apoderado.setGrado_Instruccion(resultSet.getString("grado_Instruccion"));
+                        apoderado.setOcupado(resultSet.getString("ocupacion"));
+                        apoderado.setTelefono(resultSet.getString("telefono"));
+                        apoderado.setDireccion(resultSet.getString("direccion"));
+                        apoderado.setDistrito(resultSet.getString("distrito"));
+                        apoderado.setProvincia(resultSet.getString("provincia"));
+                        apoderado.setDepartamento(resultSet.getString("departamento"));
+                        apoderado.setSexo(resultSet.getString("sexo"));
+                        apoderado.setFecha_Nacimiento(resultSet.getDate("fecha_Nacimiento"));
                     }
                 }
             }
@@ -309,20 +326,21 @@ public class Apoderado {
                 statement.setString(1, dni);
                 try(ResultSet resultSet = statement.executeQuery()){
                     apoderado=new Apoderado();
-                        apoderado.setIdApoderado(resultSet.getInt("Id_Apoderado"));
-                        apoderado.setDni(resultSet.getString("Dni"));
-                        apoderado.setEstadoVida(resultSet.getString("Estado_Vida"));
-                        apoderado.setGradoInstruccion(resultSet.getString("Grado_Instruccion"));
-                        apoderado.setOcupacion(resultSet.getString("Ocupacion"));
-                        apoderado.setTelefono(resultSet.getString("Telefono"));
-                        apoderado.setApPaterno(resultSet.getString("Ap_Paterno"));
-                        apoderado.setApMaterno(resultSet.getString("Ap_Materno"));
-                        apoderado.setNombres(resultSet.getString("Nombres"));
-                        apoderado.setDireccion(resultSet.getString("Direccion"));
-                        apoderado.setDistrito(resultSet.getString("Distrito"));
-                        apoderado.setDepartamento(resultSet.getString("Departamento"));
-                        apoderado.setGenero(resultSet.getString("Genero"));
-                        apoderado.setFecha_Nac(resultSet.getString("Fecha_Nac"));
+                    apoderado.setId_Apoderado(resultSet.getInt("id_Apoderado"));
+                        apoderado.setDni(resultSet.getString("dni"));
+                        apoderado.setApellido_Paterno(resultSet.getString("apellido_Paterno"));
+                        apoderado.setApellido_Materno(resultSet.getString("apellido_Materno"));
+                        apoderado.setNombres(resultSet.getString("nombres"));
+                        apoderado.setVive(resultSet.getString("vive"));
+                        apoderado.setGrado_Instruccion(resultSet.getString("grado_Instruccion"));
+                        apoderado.setOcupado(resultSet.getString("ocupacion"));
+                        apoderado.setTelefono(resultSet.getString("telefono"));
+                        apoderado.setDireccion(resultSet.getString("direccion"));
+                        apoderado.setDistrito(resultSet.getString("distrito"));
+                        apoderado.setProvincia(resultSet.getString("provincia"));
+                        apoderado.setDepartamento(resultSet.getString("departamento"));
+                        apoderado.setSexo(resultSet.getString("sexo"));
+                        apoderado.setFecha_Nacimiento(resultSet.getDate("fecha_Nacimiento"));
                 }
             }
         }catch(SQLException e){
@@ -338,20 +356,21 @@ public class Apoderado {
             try(Statement statement = connection.createStatement(); ResultSet resultSet = statement.executeQuery(sql)){
                 while(resultSet.next()){
                     Apoderado apoderado=new Apoderado();
-                    apoderado.setIdApoderado(resultSet.getInt("Id_Apoderado"));
-                    apoderado.setDni(resultSet.getString("Dni"));
-                    apoderado.setEstadoVida(resultSet.getString("Estado_Vida"));
-                    apoderado.setGradoInstruccion(resultSet.getString("Grado_Instruccion"));
-                    apoderado.setOcupacion(resultSet.getString("Ocupacion"));
-                    apoderado.setTelefono(resultSet.getString("Telefono"));
-                    apoderado.setApPaterno(resultSet.getString("Ap_Paterno"));
-                    apoderado.setApMaterno(resultSet.getString("Ap_Materno"));
-                    apoderado.setNombres(resultSet.getString("Nombres"));
-                    apoderado.setDireccion(resultSet.getString("Direccion"));
-                    apoderado.setDistrito(resultSet.getString("Distrito"));
-                    apoderado.setDepartamento(resultSet.getString("Departamento"));
-                    apoderado.setGenero(resultSet.getString("Genero"));
-                    apoderado.setFecha_Nac(resultSet.getString("Fecha_Nac"));
+                    apoderado.setId_Apoderado(resultSet.getInt("id_Apoderado"));
+                    apoderado.setDni(resultSet.getString("dni"));
+                    apoderado.setApellido_Paterno(resultSet.getString("apellido_Paterno"));
+                    apoderado.setApellido_Materno(resultSet.getString("apellido_Materno"));
+                    apoderado.setNombres(resultSet.getString("nombres"));
+                    apoderado.setVive(resultSet.getString("vive"));
+                    apoderado.setGrado_Instruccion(resultSet.getString("grado_Instruccion"));
+                    apoderado.setOcupado(resultSet.getString("ocupacion"));
+                    apoderado.setTelefono(resultSet.getString("telefono"));
+                    apoderado.setDireccion(resultSet.getString("direccion"));
+                    apoderado.setDistrito(resultSet.getString("distrito"));
+                    apoderado.setProvincia(resultSet.getString("provincia"));
+                    apoderado.setDepartamento(resultSet.getString("departamento"));
+                    apoderado.setSexo(resultSet.getString("sexo"));
+                    apoderado.setFecha_Nacimiento(resultSet.getDate("fecha_Nacimiento"));
                     apoderados.add(apoderado);
                 }
             }
@@ -364,19 +383,19 @@ public class Apoderado {
     public List<Apoderado>obtenerListaApoderadoRelacionados(int idEstudiante){
         List<Apoderado>apoderados=new ArrayList<>();
         try{
-            String sql = "SELECT Apoderado.Id_Apoderado, Apoderado.Dni, Apoderado.Ap_Paterno, Apoderado.Ap_Materno, Apoderado.Nombres, Relacion.Vinculo FROM Apoderado \n"
-                    + "INNER JOIN Relacion ON Relacion.Id_Apoderado = Apoderado.Id_Apoderado \n"
-                    + "WHERE Relacion.Id_Estudiante = ?";
+            String sql = "SELECT Apoderado.id_apoderado, Apoderado.dni, Apoderado.apellido_Paterno, Apoderado.apellido_Materno, Apoderado.nombres, Relacion.vinculo FROM Apoderado \n" +
+                         "INNER JOIN Relacion ON Relacion.id_apoderado = Apoderado.id_apoderado\n" +
+                         "WHERE Relacion.Id_Estudiante = ?";
             try(PreparedStatement statement = connection.prepareStatement(sql)){
                 statement.setInt(1, idEstudiante);
                 try(ResultSet resultSet = statement.executeQuery()){
                     if(resultSet.next()){
                         Apoderado apoderado=new Apoderado();
-                        apoderado.setIdApoderado(resultSet.getInt("Id_Apoderado"));
-                        apoderado.setDni(resultSet.getString("Dni"));
-                        apoderado.setApPaterno(resultSet.getString("Ap_Paterno"));
-                        apoderado.setApMaterno(resultSet.getString("Ap_Materno"));
-                        apoderado.setNombres(resultSet.getString("Nombres"));
+                        apoderado.setId_Apoderado(resultSet.getInt("id_Apoderado"));
+                        apoderado.setDni(resultSet.getString("dni"));
+                        apoderado.setApellido_Paterno(resultSet.getString("apellido_Paterno"));
+                        apoderado.setApellido_Materno(resultSet.getString("apellido_Materno"));
+                        apoderado.setNombres(resultSet.getString("nombres"));
                         apoderado.setDireccion(resultSet.getString("Vinculo"));
                         apoderados.add(apoderado);
                     }

@@ -1,30 +1,21 @@
 /*
- * Copyright (c) 2002, 2023, Oracle and/or its affiliates.
+ * Copyright (c) 2002, 2024, Oracle and/or its affiliates.
  *
- * This program is free software; you can redistribute it and/or modify it under
- * the terms of the GNU General Public License, version 2.0, as published by the
- * Free Software Foundation.
+ * This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License, version 2.0, as published by
+ * the Free Software Foundation.
  *
- * This program is also distributed with certain software (including but not
- * limited to OpenSSL) that is licensed under separate terms, as designated in a
- * particular file or component or in included license documentation. The
- * authors of MySQL hereby grant you an additional permission to link the
- * program and your derivative works with the separately licensed software that
- * they have included with MySQL.
+ * This program is designed to work with certain software that is licensed under separate terms, as designated in a particular file or component or in
+ * included license documentation. The authors of MySQL hereby grant you an additional permission to link the program and your derivative works with the
+ * separately licensed software that they have either included with the program or referenced in the documentation.
  *
- * Without limiting anything contained in the foregoing, this file, which is
- * part of MySQL Connector/J, is also subject to the Universal FOSS Exception,
- * version 1.0, a copy of which can be found at
- * http://oss.oracle.com/licenses/universal-foss-exception.
+ * Without limiting anything contained in the foregoing, this file, which is part of MySQL Connector/J, is also subject to the Universal FOSS Exception,
+ * version 1.0, a copy of which can be found at http://oss.oracle.com/licenses/universal-foss-exception.
  *
- * This program is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- * FOR A PARTICULAR PURPOSE. See the GNU General Public License, version 2.0,
- * for more details.
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License, version 2.0, for more details.
  *
- * You should have received a copy of the GNU General Public License along with
- * this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301  USA
+ * You should have received a copy of the GNU General Public License along with this program; if not, write to the Free Software Foundation, Inc.,
+ * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
 package com.mysql.cj.jdbc;
@@ -81,6 +72,10 @@ import com.mysql.cj.protocol.ColumnDefinition;
 import com.mysql.cj.protocol.Message;
 import com.mysql.cj.protocol.a.NativePacketPayload;
 import com.mysql.cj.result.Field;
+import com.mysql.cj.telemetry.TelemetryAttribute;
+import com.mysql.cj.telemetry.TelemetryScope;
+import com.mysql.cj.telemetry.TelemetrySpan;
+import com.mysql.cj.telemetry.TelemetrySpanName;
 import com.mysql.cj.util.Util;
 
 /**
@@ -295,129 +290,160 @@ public class ClientPreparedStatement extends com.mysql.cj.jdbc.StatementImpl imp
     @Override
     public boolean execute() throws SQLException {
         synchronized (checkClosed().getConnectionMutex()) {
+            TelemetrySpan span = getSession().getTelemetryHandler().startSpan(TelemetrySpanName.STMT_EXECUTE_PREPARED);
+            try (TelemetryScope scope = span.makeCurrent()) {
+                String dbOperation = getQueryInfo().getStatementKeyword();
+                span.setAttribute(TelemetryAttribute.DB_NAME, getCurrentDatabase());
+                span.setAttribute(TelemetryAttribute.DB_OPERATION, dbOperation);
+                span.setAttribute(TelemetryAttribute.DB_STATEMENT, dbOperation + TelemetryAttribute.STATEMENT_SUFFIX);
+                span.setAttribute(TelemetryAttribute.DB_SYSTEM, TelemetryAttribute.DB_SYSTEM_DEFAULT);
+                span.setAttribute(TelemetryAttribute.DB_USER, this.connection.getUser());
+                span.setAttribute(TelemetryAttribute.THREAD_ID, Thread.currentThread().getId());
+                span.setAttribute(TelemetryAttribute.THREAD_NAME, Thread.currentThread().getName());
 
-            JdbcConnection locallyScopedConn = this.connection;
+                JdbcConnection locallyScopedConn = this.connection;
 
-            if (!this.doPingInstead && !checkReadOnlySafeStatement()) {
-                throw SQLError.createSQLException(Messages.getString("PreparedStatement.20") + Messages.getString("PreparedStatement.21"),
-                        MysqlErrorNumbers.SQL_STATE_ILLEGAL_ARGUMENT, this.exceptionInterceptor);
+                if (!this.doPingInstead && !checkReadOnlySafeStatement()) {
+                    throw SQLError.createSQLException(Messages.getString("PreparedStatement.20") + Messages.getString("PreparedStatement.21"),
+                            MysqlErrorNumbers.SQL_STATE_ILLEGAL_ARGUMENT, this.exceptionInterceptor);
+                }
+
+                ResultSetInternalMethods rs = null;
+
+                this.lastQueryIsOnDupKeyUpdate = false;
+
+                if (this.retrieveGeneratedKeys) {
+                    this.lastQueryIsOnDupKeyUpdate = containsOnDuplicateKeyUpdate();
+                }
+
+                this.batchedGeneratedKeys = null;
+
+                resetCancelledState();
+
+                implicitlyCloseAllOpenResults();
+
+                clearWarnings();
+
+                if (this.doPingInstead) {
+                    doPingInstead();
+
+                    return true;
+                }
+
+                setupStreamingTimeout(locallyScopedConn);
+
+                Message sendPacket = ((PreparedQuery) this.query).fillSendPacket(((PreparedQuery) this.query).getQueryBindings());
+
+                String oldDb = null;
+
+                if (!locallyScopedConn.getDatabase().equals(getCurrentDatabase())) {
+                    oldDb = locallyScopedConn.getDatabase();
+                    locallyScopedConn.setDatabase(getCurrentDatabase());
+                }
+
+                //
+                // Check if we have cached metadata for this query...
+                //
+                CachedResultSetMetaData cachedMetadata = null;
+
+                boolean cacheResultSetMetadata = locallyScopedConn.getPropertySet().getBooleanProperty(PropertyKey.cacheResultSetMetadata).getValue();
+                if (cacheResultSetMetadata) {
+                    cachedMetadata = locallyScopedConn.getCachedMetaData(((PreparedQuery) this.query).getOriginalSql());
+                }
+
+                //
+                // Only apply max_rows to selects
+                //
+                locallyScopedConn.setSessionMaxRows(getQueryInfo().getFirstStmtChar() == 'S' ? this.maxRows : -1);
+
+                rs = executeInternal(this.maxRows, sendPacket, createStreamingResultSet(), getQueryInfo().getFirstStmtChar() == 'S', cachedMetadata, false);
+
+                if (cachedMetadata != null) {
+                    locallyScopedConn.initializeResultsMetadataFromCache(((PreparedQuery) this.query).getOriginalSql(), cachedMetadata, rs);
+                } else if (rs.hasRows() && cacheResultSetMetadata) {
+                    locallyScopedConn.initializeResultsMetadataFromCache(((PreparedQuery) this.query).getOriginalSql(), null /* will be created */, rs);
+                }
+
+                if (this.retrieveGeneratedKeys) {
+                    rs.setFirstCharOfQuery(getQueryInfo().getFirstStmtChar());
+                }
+
+                if (oldDb != null) {
+                    locallyScopedConn.setDatabase(oldDb);
+                }
+
+                if (rs != null) {
+                    this.lastInsertId = rs.getUpdateID();
+
+                    this.results = rs;
+                }
+
+                return rs != null && rs.hasRows();
+            } catch (Throwable t) {
+                span.setError(t);
+                throw t;
+            } finally {
+                span.end();
             }
-
-            ResultSetInternalMethods rs = null;
-
-            this.lastQueryIsOnDupKeyUpdate = false;
-
-            if (this.retrieveGeneratedKeys) {
-                this.lastQueryIsOnDupKeyUpdate = containsOnDuplicateKeyUpdate();
-            }
-
-            this.batchedGeneratedKeys = null;
-
-            resetCancelledState();
-
-            implicitlyCloseAllOpenResults();
-
-            clearWarnings();
-
-            if (this.doPingInstead) {
-                doPingInstead();
-
-                return true;
-            }
-
-            setupStreamingTimeout(locallyScopedConn);
-
-            Message sendPacket = ((PreparedQuery) this.query).fillSendPacket(((PreparedQuery) this.query).getQueryBindings());
-
-            String oldDb = null;
-
-            if (!locallyScopedConn.getDatabase().equals(this.getCurrentDatabase())) {
-                oldDb = locallyScopedConn.getDatabase();
-                locallyScopedConn.setDatabase(this.getCurrentDatabase());
-            }
-
-            //
-            // Check if we have cached metadata for this query...
-            //
-            CachedResultSetMetaData cachedMetadata = null;
-
-            boolean cacheResultSetMetadata = locallyScopedConn.getPropertySet().getBooleanProperty(PropertyKey.cacheResultSetMetadata).getValue();
-            if (cacheResultSetMetadata) {
-                cachedMetadata = locallyScopedConn.getCachedMetaData(((PreparedQuery) this.query).getOriginalSql());
-            }
-
-            //
-            // Only apply max_rows to selects
-            //
-            locallyScopedConn.setSessionMaxRows(getQueryInfo().getFirstStmtChar() == 'S' ? this.maxRows : -1);
-
-            rs = executeInternal(this.maxRows, sendPacket, createStreamingResultSet(), getQueryInfo().getFirstStmtChar() == 'S', cachedMetadata, false);
-
-            if (cachedMetadata != null) {
-                locallyScopedConn.initializeResultsMetadataFromCache(((PreparedQuery) this.query).getOriginalSql(), cachedMetadata, rs);
-            } else if (rs.hasRows() && cacheResultSetMetadata) {
-                locallyScopedConn.initializeResultsMetadataFromCache(((PreparedQuery) this.query).getOriginalSql(), null /* will be created */, rs);
-            }
-
-            if (this.retrieveGeneratedKeys) {
-                rs.setFirstCharOfQuery(getQueryInfo().getFirstStmtChar());
-            }
-
-            if (oldDb != null) {
-                locallyScopedConn.setDatabase(oldDb);
-            }
-
-            if (rs != null) {
-                this.lastInsertId = rs.getUpdateID();
-
-                this.results = rs;
-            }
-
-            return rs != null && rs.hasRows();
         }
     }
 
     @Override
     protected long[] executeBatchInternal() throws SQLException {
         synchronized (checkClosed().getConnectionMutex()) {
+            TelemetrySpan span = getSession().getTelemetryHandler().startSpan(TelemetrySpanName.STMT_EXECUTE_BATCH_PREPARED);
+            try (TelemetryScope scope = span.makeCurrent()) {
+                span.setAttribute(TelemetryAttribute.DB_NAME, getCurrentDatabase());
+                span.setAttribute(TelemetryAttribute.DB_OPERATION, TelemetryAttribute.OPERATION_BATCH);
+                span.setAttribute(TelemetryAttribute.DB_STATEMENT, TelemetryAttribute.OPERATION_BATCH);
+                span.setAttribute(TelemetryAttribute.DB_SYSTEM, TelemetryAttribute.DB_SYSTEM_DEFAULT);
+                span.setAttribute(TelemetryAttribute.DB_USER, this.connection.getUser());
+                span.setAttribute(TelemetryAttribute.THREAD_ID, Thread.currentThread().getId());
+                span.setAttribute(TelemetryAttribute.THREAD_NAME, Thread.currentThread().getName());
 
-            if (this.connection.isReadOnly()) {
-                throw new SQLException(Messages.getString("PreparedStatement.25") + Messages.getString("PreparedStatement.26"),
-                        MysqlErrorNumbers.SQL_STATE_ILLEGAL_ARGUMENT);
-            }
-
-            if (this.query.getBatchedArgs() == null || this.query.getBatchedArgs().size() == 0) {
-                return new long[0];
-            }
-
-            // we timeout the entire batch, not individual statements
-            int batchTimeout = getTimeoutInMillis();
-            setTimeoutInMillis(0);
-
-            resetCancelledState();
-
-            try {
-                statementBegins();
-
-                clearWarnings();
-
-                if (!this.batchHasPlainStatements && this.rewriteBatchedStatements.getValue()) {
-
-                    if (getQueryInfo().isRewritableWithMultiValuesClause()) {
-                        return executeBatchWithMultiValuesClause(batchTimeout);
-                    }
-
-                    if (!this.batchHasPlainStatements && this.query.getBatchedArgs() != null
-                            && this.query.getBatchedArgs().size() > 3 /* cost of option setting rt-wise */) {
-                        return executePreparedBatchAsMultiStatement(batchTimeout);
-                    }
+                if (this.connection.isReadOnly()) {
+                    throw new SQLException(Messages.getString("PreparedStatement.25") + Messages.getString("PreparedStatement.26"),
+                            MysqlErrorNumbers.SQL_STATE_ILLEGAL_ARGUMENT);
                 }
 
-                return executeBatchSerially(batchTimeout);
-            } finally {
-                this.query.getStatementExecuting().set(false);
+                if (this.query.getBatchedArgs() == null || this.query.getBatchedArgs().size() == 0) {
+                    return new long[0];
+                }
 
-                clearBatch();
+                // we timeout the entire batch, not individual statements
+                long batchTimeout = getTimeoutInMillis();
+                setTimeoutInMillis(0);
+
+                resetCancelledState();
+
+                try {
+                    statementBegins();
+
+                    clearWarnings();
+
+                    if (!this.batchHasPlainStatements && this.rewriteBatchedStatements.getValue()) {
+
+                        if (getQueryInfo().isRewritableWithMultiValuesClause()) {
+                            return executeBatchWithMultiValuesClause(batchTimeout);
+                        }
+
+                        if (!this.batchHasPlainStatements && this.query.getBatchedArgs() != null
+                                && this.query.getBatchedArgs().size() > 3 /* cost of option setting rt-wise */) {
+                            return executePreparedBatchAsMultiStatement(batchTimeout);
+                        }
+                    }
+
+                    return executeBatchSerially(batchTimeout);
+                } finally {
+                    this.query.getStatementExecuting().set(false);
+
+                    clearBatch();
+                }
+            } catch (Throwable t) {
+                span.setError(t);
+                throw t;
+            } finally {
+                span.end();
             }
         }
     }
@@ -432,7 +458,7 @@ public class ClientPreparedStatement extends com.mysql.cj.jdbc.StatementImpl imp
      * @throws SQLException
      *             if a database access error occurs or this method is called on a closed PreparedStatement
      */
-    protected long[] executePreparedBatchAsMultiStatement(int batchTimeout) throws SQLException {
+    protected long[] executePreparedBatchAsMultiStatement(long batchTimeout) throws SQLException {
         synchronized (checkClosed().getConnectionMutex()) {
             // This is kind of an abuse, but it gets the job done
             if (this.batchedValuesClause == null) {
@@ -618,7 +644,7 @@ public class ClientPreparedStatement extends com.mysql.cj.jdbc.StatementImpl imp
      * @throws SQLException
      *             if a database access error occurs or this method is called on a closed PreparedStatement
      */
-    protected long[] executeBatchWithMultiValuesClause(int batchTimeout) throws SQLException {
+    protected long[] executeBatchWithMultiValuesClause(long batchTimeout) throws SQLException {
         synchronized (checkClosed().getConnectionMutex()) {
             JdbcConnection locallyScopedConn = this.connection;
 
@@ -746,7 +772,7 @@ public class ClientPreparedStatement extends com.mysql.cj.jdbc.StatementImpl imp
      * @throws SQLException
      *             if an error occurs
      */
-    protected long[] executeBatchSerially(int batchTimeout) throws SQLException {
+    protected long[] executeBatchSerially(long batchTimeout) throws SQLException {
         synchronized (checkClosed().getConnectionMutex()) {
             if (this.connection == null) {
                 checkClosed();
@@ -915,71 +941,87 @@ public class ClientPreparedStatement extends com.mysql.cj.jdbc.StatementImpl imp
     @Override
     public java.sql.ResultSet executeQuery() throws SQLException {
         synchronized (checkClosed().getConnectionMutex()) {
+            TelemetrySpan span = getSession().getTelemetryHandler().startSpan(TelemetrySpanName.STMT_EXECUTE_PREPARED);
+            try (TelemetryScope scope = span.makeCurrent()) {
+                String dbOperation = getQueryInfo().getStatementKeyword();
+                span.setAttribute(TelemetryAttribute.DB_NAME, getCurrentDatabase());
+                span.setAttribute(TelemetryAttribute.DB_OPERATION, dbOperation);
+                span.setAttribute(TelemetryAttribute.DB_STATEMENT, dbOperation + TelemetryAttribute.STATEMENT_SUFFIX);
+                span.setAttribute(TelemetryAttribute.DB_SYSTEM, TelemetryAttribute.DB_SYSTEM_DEFAULT);
+                span.setAttribute(TelemetryAttribute.DB_USER, this.connection.getUser());
+                span.setAttribute(TelemetryAttribute.THREAD_ID, Thread.currentThread().getId());
+                span.setAttribute(TelemetryAttribute.THREAD_NAME, Thread.currentThread().getName());
 
-            JdbcConnection locallyScopedConn = this.connection;
+                JdbcConnection locallyScopedConn = this.connection;
 
-            if (!this.doPingInstead) {
-                QueryReturnType queryReturnType = getQueryInfo().getQueryReturnType();
-                if (queryReturnType != QueryReturnType.PRODUCES_RESULT_SET && queryReturnType != QueryReturnType.MAY_PRODUCE_RESULT_SET) {
-                    throw SQLError.createSQLException(Messages.getString("Statement.57"), MysqlErrorNumbers.SQL_STATE_ILLEGAL_ARGUMENT,
-                            getExceptionInterceptor());
+                if (!this.doPingInstead) {
+                    QueryReturnType queryReturnType = getQueryInfo().getQueryReturnType();
+                    if (queryReturnType != QueryReturnType.PRODUCES_RESULT_SET && queryReturnType != QueryReturnType.MAY_PRODUCE_RESULT_SET) {
+                        throw SQLError.createSQLException(Messages.getString("Statement.57"), MysqlErrorNumbers.SQL_STATE_ILLEGAL_ARGUMENT,
+                                getExceptionInterceptor());
+                    }
                 }
-            }
 
-            this.batchedGeneratedKeys = null;
+                this.batchedGeneratedKeys = null;
 
-            resetCancelledState();
+                resetCancelledState();
 
-            implicitlyCloseAllOpenResults();
+                implicitlyCloseAllOpenResults();
 
-            clearWarnings();
+                clearWarnings();
 
-            if (this.doPingInstead) {
-                doPingInstead();
+                if (this.doPingInstead) {
+                    doPingInstead();
+
+                    return this.results;
+                }
+
+                setupStreamingTimeout(locallyScopedConn);
+
+                Message sendPacket = ((PreparedQuery) this.query).fillSendPacket(((PreparedQuery) this.query).getQueryBindings());
+
+                String oldDb = null;
+
+                if (!locallyScopedConn.getDatabase().equals(getCurrentDatabase())) {
+                    oldDb = locallyScopedConn.getDatabase();
+                    locallyScopedConn.setDatabase(getCurrentDatabase());
+                }
+
+                //
+                // Check if we have cached metadata for this query...
+                //
+                CachedResultSetMetaData cachedMetadata = null;
+                boolean cacheResultSetMetadata = locallyScopedConn.getPropertySet().getBooleanProperty(PropertyKey.cacheResultSetMetadata).getValue();
+
+                String origSql = ((PreparedQuery) this.query).getOriginalSql();
+
+                if (cacheResultSetMetadata) {
+                    cachedMetadata = locallyScopedConn.getCachedMetaData(origSql);
+                }
+
+                locallyScopedConn.setSessionMaxRows(this.maxRows);
+
+                this.results = executeInternal(this.maxRows, sendPacket, createStreamingResultSet(), true, cachedMetadata, false);
+
+                if (oldDb != null) {
+                    locallyScopedConn.setDatabase(oldDb);
+                }
+
+                if (cachedMetadata != null) {
+                    locallyScopedConn.initializeResultsMetadataFromCache(origSql, cachedMetadata, this.results);
+                } else if (cacheResultSetMetadata) {
+                    locallyScopedConn.initializeResultsMetadataFromCache(origSql, null /* will be created */, this.results);
+                }
+
+                this.lastInsertId = this.results.getUpdateID();
 
                 return this.results;
+            } catch (Throwable t) {
+                span.setError(t);
+                throw t;
+            } finally {
+                span.end();
             }
-
-            setupStreamingTimeout(locallyScopedConn);
-
-            Message sendPacket = ((PreparedQuery) this.query).fillSendPacket(((PreparedQuery) this.query).getQueryBindings());
-
-            String oldDb = null;
-
-            if (!locallyScopedConn.getDatabase().equals(this.getCurrentDatabase())) {
-                oldDb = locallyScopedConn.getDatabase();
-                locallyScopedConn.setDatabase(this.getCurrentDatabase());
-            }
-
-            //
-            // Check if we have cached metadata for this query...
-            //
-            CachedResultSetMetaData cachedMetadata = null;
-            boolean cacheResultSetMetadata = locallyScopedConn.getPropertySet().getBooleanProperty(PropertyKey.cacheResultSetMetadata).getValue();
-
-            String origSql = ((PreparedQuery) this.query).getOriginalSql();
-
-            if (cacheResultSetMetadata) {
-                cachedMetadata = locallyScopedConn.getCachedMetaData(origSql);
-            }
-
-            locallyScopedConn.setSessionMaxRows(this.maxRows);
-
-            this.results = executeInternal(this.maxRows, sendPacket, createStreamingResultSet(), true, cachedMetadata, false);
-
-            if (oldDb != null) {
-                locallyScopedConn.setDatabase(oldDb);
-            }
-
-            if (cachedMetadata != null) {
-                locallyScopedConn.initializeResultsMetadataFromCache(origSql, cachedMetadata, this.results);
-            } else if (cacheResultSetMetadata) {
-                locallyScopedConn.initializeResultsMetadataFromCache(origSql, null /* will be created */, this.results);
-            }
-
-            this.lastInsertId = this.results.getUpdateID();
-
-            return this.results;
         }
     }
 
@@ -1019,61 +1061,77 @@ public class ClientPreparedStatement extends com.mysql.cj.jdbc.StatementImpl imp
      */
     protected long executeUpdateInternal(QueryBindings bindings, boolean isReallyBatch) throws SQLException {
         synchronized (checkClosed().getConnectionMutex()) {
+            TelemetrySpan span = getSession().getTelemetryHandler().startSpan(TelemetrySpanName.STMT_EXECUTE_PREPARED);
+            try (TelemetryScope scope = span.makeCurrent()) {
+                String dbOperation = getQueryInfo().getStatementKeyword();
+                span.setAttribute(TelemetryAttribute.DB_NAME, getCurrentDatabase());
+                span.setAttribute(TelemetryAttribute.DB_OPERATION, dbOperation);
+                span.setAttribute(TelemetryAttribute.DB_STATEMENT, dbOperation + TelemetryAttribute.STATEMENT_SUFFIX);
+                span.setAttribute(TelemetryAttribute.DB_SYSTEM, TelemetryAttribute.DB_SYSTEM_DEFAULT);
+                span.setAttribute(TelemetryAttribute.DB_USER, this.connection.getUser());
+                span.setAttribute(TelemetryAttribute.THREAD_ID, Thread.currentThread().getId());
+                span.setAttribute(TelemetryAttribute.THREAD_NAME, Thread.currentThread().getName());
 
-            JdbcConnection locallyScopedConn = this.connection;
+                JdbcConnection locallyScopedConn = this.connection;
 
-            if (locallyScopedConn.isReadOnly(false)) {
-                throw SQLError.createSQLException(Messages.getString("PreparedStatement.34") + Messages.getString("PreparedStatement.35"),
-                        MysqlErrorNumbers.SQL_STATE_ILLEGAL_ARGUMENT, this.exceptionInterceptor);
-            }
-
-            if (!isNonResultSetProducingQuery()) {
-                throw SQLError.createSQLException(Messages.getString("PreparedStatement.37"), "01S03", this.exceptionInterceptor);
-            }
-
-            resetCancelledState();
-
-            implicitlyCloseAllOpenResults();
-
-            ResultSetInternalMethods rs = null;
-
-            Message sendPacket = ((PreparedQuery) this.query).fillSendPacket(bindings);
-
-            String oldDb = null;
-
-            if (!locallyScopedConn.getDatabase().equals(this.getCurrentDatabase())) {
-                oldDb = locallyScopedConn.getDatabase();
-                locallyScopedConn.setDatabase(this.getCurrentDatabase());
-            }
-
-            //
-            // Only apply max_rows to selects
-            //
-            locallyScopedConn.setSessionMaxRows(-1);
-
-            rs = executeInternal(-1, sendPacket, false, false, null, isReallyBatch);
-
-            if (this.retrieveGeneratedKeys) {
-                rs.setFirstCharOfQuery(getQueryInfo().getFirstStmtChar());
-            }
-
-            if (oldDb != null) {
-                locallyScopedConn.setDatabase(oldDb);
-            }
-
-            this.results = rs;
-
-            this.updateCount = rs.getUpdateCount();
-
-            if (containsOnDuplicateKeyUpdate() && this.compensateForOnDuplicateKeyUpdate) {
-                if (this.updateCount == 2 || this.updateCount == 0) {
-                    this.updateCount = 1;
+                if (locallyScopedConn.isReadOnly(false)) {
+                    throw SQLError.createSQLException(Messages.getString("PreparedStatement.34") + Messages.getString("PreparedStatement.35"),
+                            MysqlErrorNumbers.SQL_STATE_ILLEGAL_ARGUMENT, this.exceptionInterceptor);
                 }
+
+                if (!isNonResultSetProducingQuery()) {
+                    throw SQLError.createSQLException(Messages.getString("PreparedStatement.37"), "01S03", this.exceptionInterceptor);
+                }
+
+                resetCancelledState();
+
+                implicitlyCloseAllOpenResults();
+
+                ResultSetInternalMethods rs = null;
+
+                Message sendPacket = ((PreparedQuery) this.query).fillSendPacket(bindings);
+
+                String oldDb = null;
+
+                if (!locallyScopedConn.getDatabase().equals(getCurrentDatabase())) {
+                    oldDb = locallyScopedConn.getDatabase();
+                    locallyScopedConn.setDatabase(getCurrentDatabase());
+                }
+
+                //
+                // Only apply max_rows to selects
+                //
+                locallyScopedConn.setSessionMaxRows(-1);
+
+                rs = executeInternal(-1, sendPacket, false, false, null, isReallyBatch);
+
+                if (this.retrieveGeneratedKeys) {
+                    rs.setFirstCharOfQuery(getQueryInfo().getFirstStmtChar());
+                }
+
+                if (oldDb != null) {
+                    locallyScopedConn.setDatabase(oldDb);
+                }
+
+                this.results = rs;
+
+                this.updateCount = rs.getUpdateCount();
+
+                if (containsOnDuplicateKeyUpdate() && this.compensateForOnDuplicateKeyUpdate) {
+                    if (this.updateCount == 2 || this.updateCount == 0) {
+                        this.updateCount = 1;
+                    }
+                }
+
+                this.lastInsertId = rs.getUpdateID();
+
+                return this.updateCount;
+            } catch (Throwable t) {
+                span.setError(t);
+                throw t;
+            } finally {
+                span.end();
             }
-
-            this.lastInsertId = rs.getUpdateID();
-
-            return this.updateCount;
         }
     }
 
@@ -1095,7 +1153,7 @@ public class ClientPreparedStatement extends com.mysql.cj.jdbc.StatementImpl imp
     protected ClientPreparedStatement prepareBatchedInsertSQL(JdbcConnection localConn, int numBatches) throws SQLException {
         synchronized (checkClosed().getConnectionMutex()) {
             ClientPreparedStatement pstmt = new ClientPreparedStatement(localConn, "Rewritten batch of: " + ((PreparedQuery) this.query).getOriginalSql(),
-                    this.getCurrentDatabase(), getQueryInfo().getQueryInfoForBatch(numBatches));
+                    getCurrentDatabase(), getQueryInfo().getQueryInfoForBatch(numBatches));
             pstmt.setRetrieveGeneratedKeys(this.retrieveGeneratedKeys);
             pstmt.rewrittenBatchSize = numBatches;
 
@@ -1137,8 +1195,7 @@ public class ClientPreparedStatement extends com.mysql.cj.jdbc.StatementImpl imp
 
             if (this.pstmtResultMetaData == null) {
                 try {
-                    mdStmt = new ClientPreparedStatement(this.connection, ((PreparedQuery) this.query).getOriginalSql(), this.getCurrentDatabase(),
-                            getQueryInfo());
+                    mdStmt = new ClientPreparedStatement(this.connection, ((PreparedQuery) this.query).getOriginalSql(), getCurrentDatabase(), getQueryInfo());
 
                     mdStmt.setMaxRows(1);
 

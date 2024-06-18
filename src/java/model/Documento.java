@@ -15,7 +15,9 @@ import jakarta.servlet.http.Part;
  * @author salaz
  */
 public class Documento {
+    
     private Connection connection;
+    
     private int idDocumento;
     private int idMatricula;
     private Part filePart;

@@ -1,30 +1,21 @@
 /*
- * Copyright (c) 2015, 2023, Oracle and/or its affiliates.
+ * Copyright (c) 2015, 2024, Oracle and/or its affiliates.
  *
- * This program is free software; you can redistribute it and/or modify it under
- * the terms of the GNU General Public License, version 2.0, as published by the
- * Free Software Foundation.
+ * This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License, version 2.0, as published by
+ * the Free Software Foundation.
  *
- * This program is also distributed with certain software (including but not
- * limited to OpenSSL) that is licensed under separate terms, as designated in a
- * particular file or component or in included license documentation. The
- * authors of MySQL hereby grant you an additional permission to link the
- * program and your derivative works with the separately licensed software that
- * they have included with MySQL.
+ * This program is designed to work with certain software that is licensed under separate terms, as designated in a particular file or component or in
+ * included license documentation. The authors of MySQL hereby grant you an additional permission to link the program and your derivative works with the
+ * separately licensed software that they have either included with the program or referenced in the documentation.
  *
- * Without limiting anything contained in the foregoing, this file, which is
- * part of MySQL Connector/J, is also subject to the Universal FOSS Exception,
- * version 1.0, a copy of which can be found at
- * http://oss.oracle.com/licenses/universal-foss-exception.
+ * Without limiting anything contained in the foregoing, this file, which is part of MySQL Connector/J, is also subject to the Universal FOSS Exception,
+ * version 1.0, a copy of which can be found at http://oss.oracle.com/licenses/universal-foss-exception.
  *
- * This program is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- * FOR A PARTICULAR PURPOSE. See the GNU General Public License, version 2.0,
- * for more details.
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License, version 2.0, for more details.
  *
- * You should have received a copy of the GNU General Public License along with
- * this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301  USA
+ * You should have received a copy of the GNU General Public License along with this program; if not, write to the Free Software Foundation, Inc.,
+ * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
 package com.mysql.cj.protocol.x;
@@ -49,6 +40,7 @@ import com.google.protobuf.ByteString;
 import com.mysql.cj.MessageBuilder;
 import com.mysql.cj.Messages;
 import com.mysql.cj.PreparedQuery;
+import com.mysql.cj.Query;
 import com.mysql.cj.QueryBindings;
 import com.mysql.cj.Session;
 import com.mysql.cj.exceptions.CJOperationNotSupportedException;
@@ -154,7 +146,7 @@ public class XMessageBuilder implements MessageBuilder<XMessage> {
     }
 
     /**
-     * Initialize a {@link Insert.Builder} for table data model with common data for prepared and non-prepared executions.
+     * Initialize a {@link com.mysql.cj.x.protobuf.MysqlxCrud.Insert.Builder} for table data model with common data for prepared and non-prepared executions.
      *
      * @param schemaName
      *            the schema name
@@ -163,7 +155,7 @@ public class XMessageBuilder implements MessageBuilder<XMessage> {
      * @param insertParams
      *            the parameters to insert
      * @return
-     *         an initialized {@link Insert.Builder} instance
+     *         an initialized {@link com.mysql.cj.x.protobuf.MysqlxCrud.Insert.Builder} instance
      */
     @SuppressWarnings("unchecked")
     private Insert.Builder commonRowInsertBuilder(String schemaName, String tableName, InsertParams insertParams) {
@@ -194,14 +186,15 @@ public class XMessageBuilder implements MessageBuilder<XMessage> {
     }
 
     /**
-     * Initialize an {@link Update.Builder} for collection data model with common data for prepared and non-prepared executions.
+     * Initialize an {@link com.mysql.cj.x.protobuf.MysqlxCrud.Update.Builder} for collection data model with common data for prepared and non-prepared
+     * executions.
      *
      * @param filterParams
      *            the filter parameters
      * @param updates
      *            the updates specifications to perform
      * @return
-     *         an initialized {@link Update.Builder} instance
+     *         an initialized {@link com.mysql.cj.x.protobuf.MysqlxCrud.Update.Builder} instance
      */
     private Update.Builder commonDocUpdateBuilder(FilterParams filterParams, List<UpdateSpec> updates) {
         Update.Builder builder = Update.newBuilder().setCollection((Collection) filterParams.getCollection());
@@ -255,14 +248,14 @@ public class XMessageBuilder implements MessageBuilder<XMessage> {
     }
 
     /**
-     * Initialize an {@link Update.Builder} for table data model with common data for prepared and non-prepared executions.
+     * Initialize an {@link com.mysql.cj.x.protobuf.MysqlxCrud.Update.Builder} for table data model with common data for prepared and non-prepared executions.
      *
      * @param filterParams
      *            the filter parameters
      * @param updateParams
      *            the update parameters
      * @return
-     *         an initialized {@link Update.Builder} instance
+     *         an initialized {@link com.mysql.cj.x.protobuf.MysqlxCrud.Update.Builder} instance
      */
     @SuppressWarnings("unchecked")
     private Update.Builder commonRowUpdateBuilder(FilterParams filterParams, UpdateParams updateParams) {
@@ -311,12 +304,12 @@ public class XMessageBuilder implements MessageBuilder<XMessage> {
     }
 
     /**
-     * Initialize a {@link Find.Builder} for collection data model with common data for prepared and non-prepared executions.
+     * Initialize a {@link com.mysql.cj.x.protobuf.MysqlxCrud.Find.Builder} for collection data model with common data for prepared and non-prepared executions.
      *
      * @param filterParams
      *            the filter parameters
      * @return
-     *         an initialized {@link Find.Builder} instance
+     *         an initialized {@link com.mysql.cj.x.protobuf.MysqlxCrud.Find.Builder} instance
      */
     @SuppressWarnings("unchecked")
     private Find.Builder commonFindBuilder(FilterParams filterParams) {
@@ -374,12 +367,12 @@ public class XMessageBuilder implements MessageBuilder<XMessage> {
     }
 
     /**
-     * Initialize a {@link Delete.Builder} with common data for prepared and non-prepared executions.
+     * Initialize a {@link com.mysql.cj.x.protobuf.MysqlxCrud.Delete.Builder} with common data for prepared and non-prepared executions.
      *
      * @param filterParams
      *            the filter parameters
      * @return
-     *         an initialized {@link Delete.Builder} instance
+     *         an initialized {@link com.mysql.cj.x.protobuf.MysqlxCrud.Delete.Builder} instance
      */
     private Delete.Builder commonDeleteBuilder(FilterParams filterParams) {
         Delete.Builder builder = Delete.newBuilder().setCollection((Collection) filterParams.getCollection());
@@ -420,12 +413,12 @@ public class XMessageBuilder implements MessageBuilder<XMessage> {
     }
 
     /**
-     * Initialize a {@link StmtExecute.Builder} with common data for prepared and non-prepared executions.
+     * Initialize a {@link com.mysql.cj.x.protobuf.MysqlxSql.StmtExecute.Builder} with common data for prepared and non-prepared executions.
      *
      * @param statement
      *            the SQL statement
      * @return
-     *         an initialized {@link StmtExecute.Builder} instance
+     *         an initialized {@link com.mysql.cj.x.protobuf.MysqlxSql.StmtExecute.Builder} instance
      */
     private StmtExecute.Builder commonSqlStatementBuilder(String statement) {
         StmtExecute.Builder builder = StmtExecute.newBuilder();
@@ -999,6 +992,11 @@ public class XMessageBuilder implements MessageBuilder<XMessage> {
     public XMessage buildExpectOpen() {
         return new XMessage(MysqlxExpect.Open.newBuilder().addCond(MysqlxExpect.Open.Condition.newBuilder()
                 .setConditionKey(MysqlxExpect.Open.Condition.Key.EXPECT_FIELD_EXIST_VALUE).setConditionValue(ByteString.copyFromUtf8("6.1"))).build());
+    }
+
+    @Override
+    public XMessage buildComQuery(XMessage sharedPacket, Session sess, String query, Query callingQuery, String characterEncoding) {
+        throw ExceptionFactory.createException(CJOperationNotSupportedException.class, "Not supported");
     }
 
     @Override

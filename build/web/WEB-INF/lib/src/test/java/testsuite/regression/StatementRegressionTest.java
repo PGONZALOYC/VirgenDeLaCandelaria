@@ -1,35 +1,27 @@
 /*
- * Copyright (c) 2002, 2023, Oracle and/or its affiliates.
+ * Copyright (c) 2002, 2024, Oracle and/or its affiliates.
  *
- * This program is free software; you can redistribute it and/or modify it under
- * the terms of the GNU General Public License, version 2.0, as published by the
- * Free Software Foundation.
+ * This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License, version 2.0, as published by
+ * the Free Software Foundation.
  *
- * This program is also distributed with certain software (including but not
- * limited to OpenSSL) that is licensed under separate terms, as designated in a
- * particular file or component or in included license documentation. The
- * authors of MySQL hereby grant you an additional permission to link the
- * program and your derivative works with the separately licensed software that
- * they have included with MySQL.
+ * This program is designed to work with certain software that is licensed under separate terms, as designated in a particular file or component or in
+ * included license documentation. The authors of MySQL hereby grant you an additional permission to link the program and your derivative works with the
+ * separately licensed software that they have either included with the program or referenced in the documentation.
  *
- * Without limiting anything contained in the foregoing, this file, which is
- * part of MySQL Connector/J, is also subject to the Universal FOSS Exception,
- * version 1.0, a copy of which can be found at
- * http://oss.oracle.com/licenses/universal-foss-exception.
+ * Without limiting anything contained in the foregoing, this file, which is part of MySQL Connector/J, is also subject to the Universal FOSS Exception,
+ * version 1.0, a copy of which can be found at http://oss.oracle.com/licenses/universal-foss-exception.
  *
- * This program is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- * FOR A PARTICULAR PURPOSE. See the GNU General Public License, version 2.0,
- * for more details.
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License, version 2.0, for more details.
  *
- * You should have received a copy of the GNU General Public License along with
- * this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301  USA
+ * You should have received a copy of the GNU General Public License along with this program; if not, write to the Free Software Foundation, Inc.,
+ * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
 package testsuite.regression;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -127,6 +119,7 @@ import com.mysql.cj.conf.PropertyDefinitions;
 import com.mysql.cj.conf.PropertyDefinitions.DatabaseTerm;
 import com.mysql.cj.conf.PropertyDefinitions.SslMode;
 import com.mysql.cj.conf.PropertyKey;
+import com.mysql.cj.conf.PropertySet;
 import com.mysql.cj.exceptions.CJCommunicationsException;
 import com.mysql.cj.exceptions.ExceptionFactory;
 import com.mysql.cj.exceptions.MysqlErrorNumbers;
@@ -13487,6 +13480,200 @@ public class StatementRegressionTest extends BaseTestCase {
 
             }
         } while (useSPS = !useSPS);
+    }
+
+    /**
+     * Tests fix for Bug#112195 (Bug#35749998), getWarnings() of StatementImpl contains all warnings.
+     *
+     * @throws Exception
+     */
+    @Test
+    void testBug112195() throws Exception {
+        String sql = "DROP TABLE IF EXISTS testBug112195";
+
+        // This creates a single warning.
+        this.stmt.execute(sql);
+
+        SQLWarning warningToLog = this.stmt.getWarnings();
+        int warningCounter = 0;
+        while (warningToLog != null) {
+            warningCounter++;
+            warningToLog = warningToLog.getNextWarning();
+        }
+        assertEquals(1, warningCounter);
+
+        // This must clear the previous warning and generate a new one.
+        this.stmt.execute(sql);
+
+        warningToLog = this.stmt.getWarnings();
+        warningCounter = 0;
+        while (warningToLog != null) {
+            warningCounter++;
+            warningToLog = warningToLog.getNextWarning();
+        }
+        assertEquals(1, warningCounter);
+    }
+
+    /**
+     * Tests fix for Bug#109546 (Bug#34958912), executeUpdate throws SQLException on queries that are only comments.
+     *
+     * @throws Exception
+     */
+    @Test
+    void testBug109546() throws Exception {
+        assertDoesNotThrow(() -> {
+            this.stmt.executeUpdate("#comment");
+        });
+        assertDoesNotThrow(() -> {
+            this.stmt.executeUpdate("-- comment");
+        });
+        assertDoesNotThrow(() -> {
+            this.stmt.executeUpdate("/* comment */");
+        });
+        assertDoesNotThrow(() -> {
+            this.stmt.executeUpdate("/* com\nment */");
+        });
+    }
+
+    /**
+     * Tests fix for Bug#112884 (Bug#36043166), Setting a large timeout leads to errors when executing SQL.
+     *
+     * @throws Exception
+     */
+    @Test
+    void testBug112884() throws Exception {
+        assertDoesNotThrow(() -> {
+            this.stmt.setQueryTimeout(Integer.MAX_VALUE / 1000 + 1);
+        });
+    }
+
+    /**
+     * Tests fix for Bug#107107 (Bug#34101635), Redundant "Reset stmt" when setting useServerPrepStmts&cachePrepStmts to true.
+     *
+     * @throws Exception
+     */
+    @Test
+    void testBug107107() throws Exception {
+        String prevGeneralLog = this.getMysqlVariable("general_log");
+        String prevLogOutput = this.getMysqlVariable("log_output");
+
+        try {
+            Properties props = new Properties();
+            props.setProperty(PropertyKey.useServerPrepStmts.getKeyName(), "true");
+            props.setProperty(PropertyKey.cachePrepStmts.getKeyName(), "true");
+            Connection testConn = getConnectionWithProps(props);
+
+            this.stmt.execute("SET GLOBAL general_log = 'OFF'");
+            this.stmt.execute("SET GLOBAL log_output = 'TABLE'");
+            this.stmt.execute("SET GLOBAL general_log = 'ON'");
+
+            createTable("testBug107107", "(id INT)");
+
+            PreparedStatement ps = null;
+            String sql = "INSERT INTO testBug107107 (id) VALUES (?)";
+            for (int i = 1; i <= 3; i++) {
+                ps = testConn.prepareStatement(sql);
+                ps.setInt(1, i);
+                ps.execute();
+                ps.close();
+            }
+
+            boolean foundTestTable = false;
+            this.rs = this.stmt.executeQuery("SELECT command_type, CONVERT(argument USING utf8mb4) FROM mysql.general_log ORDER BY event_time DESC LIMIT 10");
+            while (this.rs.next()) {
+                String commandType = this.rs.getString(1);
+                String argument = this.rs.getString(2);
+                if (!foundTestTable && argument.contains("testBug107107")) {
+                    foundTestTable = true;
+                }
+                assertFalse(commandType.contains("Reset stmt"), "Unexpected Reset stmt command found.");
+            }
+            assertTrue(foundTestTable, "Expected general log events were not recorded in mysql.general_log.");
+
+            testConn.close();
+        } finally {
+            this.stmt.execute("SET GLOBAL general_log = 'OFF'");
+            this.stmt.execute("SET GLOBAL log_output = '" + prevLogOutput + "'");
+            this.stmt.execute("SET GLOBAL general_log = '" + prevGeneralLog + "'");
+        }
+    }
+
+    /**
+     * Test fix for Bug#77183 (21181501), INSERT..VALUE..lead to invalidation of batch insert.
+     *
+     * @throws Exception
+     */
+    @Test
+    public void testBug77183() throws Exception {
+        createTable("testBug77183", "(c1 INT, c2 INT)");
+
+        boolean useSPS = false;
+        boolean rwBS = false;
+        boolean useRep = false;
+        boolean useValue = false;
+
+        do {
+            Properties props = new Properties();
+            props.setProperty(PropertyKey.useServerPrepStmts.getKeyName(), Boolean.toString(useSPS));
+            props.setProperty(PropertyKey.rewriteBatchedStatements.getKeyName(), Boolean.toString(rwBS));
+            props.setProperty(PropertyKey.queryInterceptors.getKeyName(), TestBug77183StatementInterceptor.class.getName());
+
+            Connection testConn = getConnectionWithProps(props);
+
+            this.pstmt = testConn.prepareStatement((useRep ? "REPLACE" : "INSERT") + " INTO testBug77183 " + (useValue ? "VALUE" : "VALUES") + " (?, ?)");
+            for (int i = 1; i <= 3; i++) {
+                this.pstmt.setInt(1, i);
+                this.pstmt.setInt(2, i);
+                this.pstmt.addBatch();
+            }
+            this.pstmt.executeBatch();
+
+            testConn.close();
+        } while ((useSPS = !useSPS) || (rwBS = !rwBS) || (useRep = !useRep) || (useValue = !useValue));
+
+        assertEquals(32, TestBug77183StatementInterceptor.countInterceptions);
+    }
+
+    public static class TestBug77183StatementInterceptor extends BaseQueryInterceptor {
+
+        public static int countInterceptions = 0;
+
+        @Override
+        public <T extends Resultset> T preProcess(java.util.function.Supplier<String> sql, Query interceptedQuery) {
+            String query = sql.get();
+            if (query == null && interceptedQuery instanceof JdbcPreparedStatement) {
+                query = interceptedQuery.toString();
+                query = query.substring(query.indexOf(':') + 2);
+            }
+
+            if (interceptedQuery != null) {
+                countInterceptions++;
+
+                PropertySet pset = interceptedQuery.getSession().getPropertySet();
+
+                final boolean useSPS = pset.getBooleanProperty(PropertyKey.useServerPrepStmts).getValue();
+                final boolean rwBS = pset.getBooleanProperty(PropertyKey.rewriteBatchedStatements).getValue();
+                final String testCase = String.format("Case [SPS: %s, RwBS: %s, Query: %s]", useSPS ? "Y" : "N", rwBS ? "Y" : "N", sql);
+                final int numParamSets = query.length() - query.replace("(", "").length();
+                final int numPlaceholders = query.length() - query.replace("?", "").length();
+
+                assertEquals(rwBS ? 3 : 1, numParamSets, testCase);
+                assertEquals(useSPS ? rwBS ? 6 : 2 : 0, numPlaceholders, testCase);
+            }
+            return super.preProcess(sql, interceptedQuery);
+        }
+
+    }
+
+    /**
+     * Test fix for Bug#22931632, GETPARAMETERBINDINGS() ON A PS RETURNS NPE WHEN NOT ALL PARAMETERS ARE BOUND.
+     *
+     * @throws Exception
+     */
+    @Test
+    public void testBug22931632() throws Exception {
+        this.pstmt = this.conn.prepareStatement("SELECT ?");
+        assertDoesNotThrow(((JdbcPreparedStatement) this.pstmt)::getParameterBindings);
     }
 
 }

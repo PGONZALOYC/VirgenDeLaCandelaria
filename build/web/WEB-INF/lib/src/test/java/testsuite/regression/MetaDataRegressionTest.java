@@ -1,30 +1,21 @@
 /*
- * Copyright (c) 2002, 2023, Oracle and/or its affiliates.
+ * Copyright (c) 2002, 2024, Oracle and/or its affiliates.
  *
- * This program is free software; you can redistribute it and/or modify it under
- * the terms of the GNU General Public License, version 2.0, as published by the
- * Free Software Foundation.
+ * This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License, version 2.0, as published by
+ * the Free Software Foundation.
  *
- * This program is also distributed with certain software (including but not
- * limited to OpenSSL) that is licensed under separate terms, as designated in a
- * particular file or component or in included license documentation. The
- * authors of MySQL hereby grant you an additional permission to link the
- * program and your derivative works with the separately licensed software that
- * they have included with MySQL.
+ * This program is designed to work with certain software that is licensed under separate terms, as designated in a particular file or component or in
+ * included license documentation. The authors of MySQL hereby grant you an additional permission to link the program and your derivative works with the
+ * separately licensed software that they have either included with the program or referenced in the documentation.
  *
- * Without limiting anything contained in the foregoing, this file, which is
- * part of MySQL Connector/J, is also subject to the Universal FOSS Exception,
- * version 1.0, a copy of which can be found at
- * http://oss.oracle.com/licenses/universal-foss-exception.
+ * Without limiting anything contained in the foregoing, this file, which is part of MySQL Connector/J, is also subject to the Universal FOSS Exception,
+ * version 1.0, a copy of which can be found at http://oss.oracle.com/licenses/universal-foss-exception.
  *
- * This program is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- * FOR A PARTICULAR PURPOSE. See the GNU General Public License, version 2.0,
- * for more details.
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License, version 2.0, for more details.
  *
- * You should have received a copy of the GNU General Public License along with
- * this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301  USA
+ * You should have received a copy of the GNU General Public License along with this program; if not, write to the Free Software Foundation, Inc.,
+ * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
 package testsuite.regression;
@@ -329,6 +320,9 @@ public class MetaDataRegressionTest extends BaseTestCase {
                 String typeName = this.rs.getString("TYPE_NAME");
                 //String createParams = this.rs.getString("CREATE_PARAMS");
 
+                if (typeName.equals("VECTOR") && !versionMeetsMinimum(9, 0)) {
+                    continue;
+                }
                 if (typeName.indexOf("BINARY") == -1 && !typeName.equals("LONG VARCHAR")) {
                     if (!alreadyDoneTypes.containsKey(typeName)) {
                         alreadyDoneTypes.put(typeName, null);
@@ -1057,9 +1051,9 @@ public class MetaDataRegressionTest extends BaseTestCase {
      */
     @Test
     public void testBug11781() throws Exception {
-        createTable("`app tab`", "( C1 int(11) NULL, C2 int(11) NULL, INDEX NEWINX (C1), INDEX NEWINX2 (C1, C2))", "InnoDB");
+        createTable("`app tab`", "(C1 INT(11) NOT NULL PRIMARY KEY, C2 INT(11) NULL, INDEX NEWINX1 (C1), INDEX NEWINX2 (C1, C2))", "InnoDB");
 
-        this.stmt.executeUpdate("ALTER TABLE `app tab` ADD CONSTRAINT APPFK FOREIGN KEY (C1) REFERENCES `app tab` (C1)");
+        this.stmt.executeUpdate("ALTER TABLE `app tab` ADD CONSTRAINT APPFK FOREIGN KEY (C2) REFERENCES `app tab` (C1)");
 
         /*
          * this.rs = this.conn.getMetaData().getCrossReference(
@@ -1083,7 +1077,7 @@ public class MetaDataRegressionTest extends BaseTestCase {
                 this.rs = ((com.mysql.cj.jdbc.DatabaseMetaData) con.getMetaData()).extractForeignKeyFromCreateTable(db, "app tab");
                 assertTrue(this.rs.next(), "must return a row");
 
-                assertEquals(("comment; APPFK(`C1`) REFER `" + db + "`/ `app tab` (`C1`)").toUpperCase(), this.rs.getString(3).toUpperCase());
+                assertEquals(("comment; APPFK(`C2`) REFER `" + db + "`/ `app tab` (`C1`)").toUpperCase(), this.rs.getString(3).toUpperCase());
 
                 this.rs.close();
 
@@ -3275,7 +3269,8 @@ public class MetaDataRegressionTest extends BaseTestCase {
                     + (((JdbcConnection) st1.getConnection()).getPropertySet().<DatabaseTerm>getEnumProperty(PropertyKey.databaseTerm)
                             .getValue() == DatabaseTerm.SCHEMA ? this.conn.getSchema() : this.conn.getCatalog())
                     + ".testbug65871_foreign(cpd_foreign_1_id, cpd_foreign_2_id),  CONSTRAINT `APPFK` FOREIGN KEY (`C\"1`) REFERENCES " + quotedDbName + "."
-                    + quotedTableName + " (`C\"1`)) ENGINE=InnoDB";
+                    + quotedTableName + " (\"`B`EST`\")) ENGINE=InnoDB";
+
             st1.executeUpdate(sql);
 
             // 1. Create table
@@ -5078,8 +5073,8 @@ public class MetaDataRegressionTest extends BaseTestCase {
                         /*
                          * Functions
                          */
-                        storedProc = c1.prepareCall("{call testBug97413f(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,"
-                                + " ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)}");
+                        storedProc = c1.prepareCall("{? = call testBug97413f(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,"
+                                + " ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)}");
                         pm = storedProc.getParameterMetaData();
                         TestBug97413Columns testBug97413Columns = new TestBug97413Columns(errMsg, tinyInt1isBit, transformedBitIsBoolean, pm);
                         testBug97413Columns.testBug97413CheckMDColumn(Types.INTEGER, "INT", 0, 10, 0); // return type
@@ -5469,6 +5464,9 @@ public class MetaDataRegressionTest extends BaseTestCase {
 
         this.rs = dbmd.getTypeInfo();
         while (this.rs.next()) {
+            if (this.rs.getString("TYPE_NAME").equals("VECTOR") && !versionMeetsMinimum(9, 0)) {
+                continue;
+            }
             StringBuilder sb = new StringBuilder("CREATE TEMPORARY TABLE testBug106758 (col ");
             sb.append(this.rs.getString("TYPE_NAME"));
             if (this.rs.getString("CREATE_PARAMS").startsWith("(M)")) {
@@ -5546,6 +5544,127 @@ public class MetaDataRegressionTest extends BaseTestCase {
             assertEquals("col_C", this.rs.getString("COLUMN_NAME"));
             assertFalse(this.rs.next());
         } while (useIS = !useIS);
+    }
+
+    /**
+     * Tests fix for Bug#96582 (Bug#30222032), jdbc.MysqlParameterMetadata#isNullable doesnt check whether to be simple.
+     *
+     * @throws Exception
+     */
+    @Test
+    void testBug96582() throws Exception {
+        Properties connectionProps = new Properties();
+        connectionProps.put(PropertyKey.generateSimpleParameterMetadata.getKeyName(), "true");
+        connectionProps.put(PropertyKey.useServerPrepStmts.getKeyName(), "false");
+        Connection con = this.getConnectionWithProps(connectionProps);
+        createTable("testBug96582", "(c1 INT NOT NULL, c2 INT)");
+        this.pstmt = con.prepareStatement("INSERT INTO testBug96582(c1, c2) VALUES(?, ?)");
+        this.pstmt.setInt(1, 1);
+        this.pstmt.setInt(2, 2);
+        assertEquals(ParameterMetaData.parameterNullableUnknown, this.pstmt.getParameterMetaData().isNullable(1));
+        assertEquals(ParameterMetaData.parameterNullableUnknown, this.pstmt.getParameterMetaData().isNullable(2));
+
+        con.close();
+
+        connectionProps.put(PropertyKey.useServerPrepStmts.getKeyName(), "true");
+        con = this.getConnectionWithProps(connectionProps);
+        createTable("testBug96582", "(c1 INT NOT NULL, c2 INT)");
+        this.pstmt = con.prepareStatement("INSERT INTO testBug96582(c1, c2) VALUES(?, ?)");
+        this.pstmt.setInt(1, 1);
+        this.pstmt.setInt(2, 2);
+        assertEquals(ParameterMetaData.parameterNullable, this.pstmt.getParameterMetaData().isNullable(1));
+        assertEquals(ParameterMetaData.parameterNullable, this.pstmt.getParameterMetaData().isNullable(2));
+    }
+
+    /**
+     * Tests fix for Bug#91550 (Bug#28297874), DatabaseMetaData specifies incorrect extra name characters.
+     *
+     * @throws Exception
+     */
+    @Test
+    void testBug91550() throws Exception {
+        DatabaseMetaData md = this.conn.getMetaData();
+        assertEquals("$", md.getExtraNameCharacters());
+    }
+
+    /**
+     * Tests fix for Bug#113600 (Bug#36171575), Contribution: Fix join condition for retrieval of imported primary keys.
+     *
+     * @throws Exception
+     */
+    @Test
+    public void testBug113600() throws Exception {
+        String databaseName1 = "dbBug113600_1";
+        String databaseName2 = "dbBug113600_2";
+        if (isServerRunningOnWindows()) {
+            databaseName1 = databaseName1.toLowerCase();
+            databaseName2 = databaseName2.toLowerCase();
+        }
+        String tableName1 = "table1";
+        String tableName2 = "table2";
+        String constraintName = "fk_table2_fk_id";
+
+        createDatabase(databaseName1);
+        createTable(databaseName1 + "." + tableName1, "(`ID` bigint unsigned AUTO_INCREMENT PRIMARY KEY)");
+        createTable(databaseName1 + "." + tableName2, "(`ID` bigint unsigned AUTO_INCREMENT PRIMARY KEY, `FK_ID` bigint unsigned NOT NULL," + "CONSTRAINT `"
+                + constraintName + "` FOREIGN KEY (`FK_ID`) REFERENCES `" + databaseName1 + "`.`" + tableName1 + "` (`ID`) ON DELETE CASCADE)");
+        createDatabase(databaseName2);
+        createTable(databaseName2 + "." + tableName1, "(`ID` bigint unsigned AUTO_INCREMENT PRIMARY KEY)");
+        createTable(databaseName2 + "." + tableName2, "(`ID` bigint unsigned AUTO_INCREMENT PRIMARY KEY, `FK_ID` bigint unsigned NOT NULL," + "CONSTRAINT `"
+                + constraintName + "` FOREIGN KEY (`FK_ID`) REFERENCES `" + databaseName2 + "`.`" + tableName1 + "` (`ID`) ON DELETE RESTRICT)");
+
+        Properties props = new Properties();
+        props.setProperty(PropertyKey.sslMode.getKeyName(), SslMode.DISABLED.name());
+        props.setProperty(PropertyKey.allowPublicKeyRetrieval.getKeyName(), "true");
+        boolean useIS = false;
+        boolean dbTermIsSchema = false;
+        do {
+            String databaseTerm = dbTermIsSchema ? "SCHEMA" : "CATALOG";
+            props.setProperty(PropertyKey.useInformationSchema.getKeyName(), "" + useIS);
+            props.setProperty(PropertyKey.databaseTerm.getKeyName(), databaseTerm);
+            Connection con = getConnectionWithProps(props);
+            DatabaseMetaData md = con.getMetaData();
+
+            final String testCase = String.format("Case [useIS: %s, databaseTerm: %s]", useIS ? "Y" : "N", databaseTerm);
+
+            this.rs = dbTermIsSchema ? md.getImportedKeys(null, databaseName1, tableName2) : md.getImportedKeys(databaseName1, null, tableName2);
+            assertTrue(this.rs.next(), testCase);
+            assertEquals(dbTermIsSchema ? "def" : databaseName1, this.rs.getString("PKTABLE_CAT"), testCase);
+            assertEquals(dbTermIsSchema ? databaseName1 : null, this.rs.getString("PKTABLE_SCHEM"), testCase);
+            assertEquals(dbTermIsSchema ? "def" : databaseName1, this.rs.getString("FKTABLE_CAT"), testCase);
+            assertEquals(dbTermIsSchema ? databaseName1 : null, this.rs.getString("FKTABLE_SCHEM"), testCase);
+            assertEquals(tableName1, this.rs.getString("PKTABLE_NAME"), testCase);
+            assertEquals("ID", this.rs.getString("PKCOLUMN_NAME"), testCase);
+            assertEquals(tableName2, this.rs.getString("FKTABLE_NAME"), testCase);
+            assertEquals("FK_ID", this.rs.getString("FKCOLUMN_NAME"), testCase);
+            assertEquals(1, this.rs.getInt("KEY_SEQ"), testCase);
+            assertEquals(1, this.rs.getInt("UPDATE_RULE"), testCase);
+            assertEquals(0, this.rs.getInt("DELETE_RULE"), testCase);
+            assertEquals(constraintName, this.rs.getString("FK_NAME"), testCase);
+            assertEquals(useIS ? "PRIMARY" : null, this.rs.getString("PK_NAME"), testCase);
+            assertEquals(7, this.rs.getInt("DEFERRABILITY"), testCase);
+            assertFalse(this.rs.next(), testCase);
+
+            this.rs = dbTermIsSchema ? md.getImportedKeys(null, databaseName2, tableName2) : md.getImportedKeys(databaseName2, null, tableName2);
+            assertTrue(this.rs.next(), testCase);
+            assertEquals(dbTermIsSchema ? "def" : databaseName2, this.rs.getString("PKTABLE_CAT"), testCase);
+            assertEquals(dbTermIsSchema ? databaseName2 : null, this.rs.getString("PKTABLE_SCHEM"), testCase);
+            assertEquals(dbTermIsSchema ? "def" : databaseName2, this.rs.getString("FKTABLE_CAT"), testCase);
+            assertEquals(dbTermIsSchema ? databaseName2 : null, this.rs.getString("FKTABLE_SCHEM"), testCase);
+            assertEquals(tableName1, this.rs.getString("PKTABLE_NAME"), testCase);
+            assertEquals("ID", this.rs.getString("PKCOLUMN_NAME"), testCase);
+            assertEquals(tableName2, this.rs.getString("FKTABLE_NAME"), testCase);
+            assertEquals("FK_ID", this.rs.getString("FKCOLUMN_NAME"), testCase);
+            assertEquals(1, this.rs.getInt("KEY_SEQ"), testCase);
+            assertEquals(1, this.rs.getInt("UPDATE_RULE"), testCase);
+            assertEquals(1, this.rs.getInt("DELETE_RULE"), testCase);
+            assertEquals(constraintName, this.rs.getString("FK_NAME"), testCase);
+            assertEquals(useIS ? "PRIMARY" : null, this.rs.getString("PK_NAME"), testCase);
+            assertEquals(7, this.rs.getInt("DEFERRABILITY"), testCase);
+            assertFalse(this.rs.next(), testCase);
+
+            con.close();
+        } while ((useIS = !useIS) || (dbTermIsSchema = !dbTermIsSchema));
     }
 
 }

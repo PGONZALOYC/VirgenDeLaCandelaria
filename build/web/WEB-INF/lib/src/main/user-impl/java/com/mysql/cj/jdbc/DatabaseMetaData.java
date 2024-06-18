@@ -1,30 +1,21 @@
 /*
- * Copyright (c) 2002, 2023, Oracle and/or its affiliates.
+ * Copyright (c) 2002, 2024, Oracle and/or its affiliates.
  *
- * This program is free software; you can redistribute it and/or modify it under
- * the terms of the GNU General Public License, version 2.0, as published by the
- * Free Software Foundation.
+ * This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License, version 2.0, as published by
+ * the Free Software Foundation.
  *
- * This program is also distributed with certain software (including but not
- * limited to OpenSSL) that is licensed under separate terms, as designated in a
- * particular file or component or in included license documentation. The
- * authors of MySQL hereby grant you an additional permission to link the
- * program and your derivative works with the separately licensed software that
- * they have included with MySQL.
+ * This program is designed to work with certain software that is licensed under separate terms, as designated in a particular file or component or in
+ * included license documentation. The authors of MySQL hereby grant you an additional permission to link the program and your derivative works with the
+ * separately licensed software that they have either included with the program or referenced in the documentation.
  *
- * Without limiting anything contained in the foregoing, this file, which is
- * part of MySQL Connector/J, is also subject to the Universal FOSS Exception,
- * version 1.0, a copy of which can be found at
- * http://oss.oracle.com/licenses/universal-foss-exception.
+ * Without limiting anything contained in the foregoing, this file, which is part of MySQL Connector/J, is also subject to the Universal FOSS Exception,
+ * version 1.0, a copy of which can be found at http://oss.oracle.com/licenses/universal-foss-exception.
  *
- * This program is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- * FOR A PARTICULAR PURPOSE. See the GNU General Public License, version 2.0,
- * for more details.
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License, version 2.0, for more details.
  *
- * You should have received a copy of the GNU General Public License along with
- * this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301  USA
+ * You should have received a copy of the GNU General Public License along with this program; if not, write to the Free Software Foundation, Inc.,
+ * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
 package com.mysql.cj.jdbc;
@@ -56,6 +47,7 @@ import com.mysql.cj.Constants;
 import com.mysql.cj.Messages;
 import com.mysql.cj.MysqlType;
 import com.mysql.cj.NativeSession;
+import com.mysql.cj.QueryInfo;
 import com.mysql.cj.conf.PropertyDefinitions.DatabaseTerm;
 import com.mysql.cj.conf.PropertyKey;
 import com.mysql.cj.conf.RuntimeProperty;
@@ -72,6 +64,10 @@ import com.mysql.cj.protocol.a.result.ResultsetRowsStatic;
 import com.mysql.cj.result.DefaultColumnDefinition;
 import com.mysql.cj.result.Field;
 import com.mysql.cj.result.Row;
+import com.mysql.cj.telemetry.TelemetryAttribute;
+import com.mysql.cj.telemetry.TelemetryScope;
+import com.mysql.cj.telemetry.TelemetrySpan;
+import com.mysql.cj.telemetry.TelemetrySpanName;
 import com.mysql.cj.util.SearchMode;
 import com.mysql.cj.util.StringUtils;
 
@@ -2607,7 +2603,7 @@ public class DatabaseMetaData implements java.sql.DatabaseMetaData {
 
     @Override
     public String getExtraNameCharacters() throws SQLException {
-        return "#@";
+        return "$";
     }
 
     /**
@@ -3977,6 +3973,7 @@ public class DatabaseMetaData implements java.sql.DatabaseMetaData {
             case DATETIME:
             case TIMESTAMP:
             case GEOMETRY:
+            case VECTOR:
             case UNKNOWN:
                 rowVal[3] = s2b("'");                                                       // Literal Prefix
                 rowVal[4] = s2b("'");                                                       // Literal Suffix
@@ -3995,10 +3992,6 @@ public class DatabaseMetaData implements java.sql.DatabaseMetaData {
             case BIGINT:
             case BIGINT_UNSIGNED:
             case BOOLEAN:
-            case DOUBLE:
-            case DOUBLE_UNSIGNED:
-            case FLOAT:
-            case FLOAT_UNSIGNED:
             case INT:
             case INT_UNSIGNED:
             case MEDIUMINT:
@@ -4008,6 +4001,13 @@ public class DatabaseMetaData implements java.sql.DatabaseMetaData {
             case TINYINT:
             case TINYINT_UNSIGNED:
                 rowVal[11] = s2b("true");                                                   // Auto Increment
+                break;
+            case DOUBLE:
+            case DOUBLE_UNSIGNED:
+            case FLOAT:
+            case FLOAT_UNSIGNED:
+                boolean supportsAutoIncrement = !this.session.versionMeetsMinimum(8, 4, 0);
+                rowVal[11] = supportsAutoIncrement ? s2b("true") : s2b("false");            // Auto Increment
                 break;
             default:
                 rowVal[11] = s2b("false");                                                  // Auto Increment
@@ -4078,6 +4078,7 @@ public class DatabaseMetaData implements java.sql.DatabaseMetaData {
         tuples.add(new ByteArrayRow(getTypeInfo("MEDIUMBLOB"), getExceptionInterceptor()));
         tuples.add(new ByteArrayRow(getTypeInfo("LONGBLOB"), getExceptionInterceptor()));
         tuples.add(new ByteArrayRow(getTypeInfo("BLOB"), getExceptionInterceptor()));
+        tuples.add(new ByteArrayRow(getTypeInfo("VECTOR"), getExceptionInterceptor()));
         // java.sql.Types.VARBINARY = -3
         tuples.add(new ByteArrayRow(getTypeInfo("VARBINARY"), getExceptionInterceptor()));
         tuples.add(new ByteArrayRow(getTypeInfo("TINYBLOB"), getExceptionInterceptor()));
@@ -4959,16 +4960,33 @@ public class DatabaseMetaData implements java.sql.DatabaseMetaData {
      *             if a database access error occurs
      */
     protected java.sql.PreparedStatement prepareMetaDataSafeStatement(String sql) throws SQLException {
-        // Can't use server-side here as we coerce a lot of types to match the spec.
-        java.sql.PreparedStatement pStmt = this.conn.clientPrepareStatement(sql, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+        TelemetrySpan span = this.session.getTelemetryHandler().startSpan(TelemetrySpanName.STMT_PREPARE);
+        try (TelemetryScope scope = span.makeCurrent()) {
+            String dbOperation = QueryInfo.getStatementKeyword(sql, this.session.getServerSession().isNoBackslashEscapesSet());
+            span.setAttribute(TelemetryAttribute.DB_NAME, this.conn.getDatabase());
+            span.setAttribute(TelemetryAttribute.DB_OPERATION, dbOperation);
+            span.setAttribute(TelemetryAttribute.DB_STATEMENT, dbOperation + TelemetryAttribute.STATEMENT_SUFFIX);
+            span.setAttribute(TelemetryAttribute.DB_SYSTEM, TelemetryAttribute.DB_SYSTEM_DEFAULT);
+            span.setAttribute(TelemetryAttribute.DB_USER, this.conn.getUser());
+            span.setAttribute(TelemetryAttribute.THREAD_ID, Thread.currentThread().getId());
+            span.setAttribute(TelemetryAttribute.THREAD_NAME, Thread.currentThread().getName());
 
-        if (pStmt.getMaxRows() != 0) {
-            pStmt.setMaxRows(0);
+            // Can't use server-side here as we coerce a lot of types to match the spec.
+            java.sql.PreparedStatement pStmt = this.conn.clientPrepareStatement(sql, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+
+            if (pStmt.getMaxRows() != 0) {
+                pStmt.setMaxRows(0);
+            }
+
+            ((com.mysql.cj.jdbc.JdbcStatement) pStmt).setHoldResultsOpenOverClose(true);
+
+            return pStmt;
+        } catch (Throwable t) {
+            span.setError(t);
+            throw t;
+        } finally {
+            span.end();
         }
-
-        ((com.mysql.cj.jdbc.JdbcStatement) pStmt).setHoldResultsOpenOverClose(true);
-
-        return pStmt;
     }
 
     @Override

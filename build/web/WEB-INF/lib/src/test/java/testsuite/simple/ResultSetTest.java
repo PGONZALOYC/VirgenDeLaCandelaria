@@ -1,30 +1,21 @@
 /*
- * Copyright (c) 2005, 2023, Oracle and/or its affiliates.
+ * Copyright (c) 2005, 2024, Oracle and/or its affiliates.
  *
- * This program is free software; you can redistribute it and/or modify it under
- * the terms of the GNU General Public License, version 2.0, as published by the
- * Free Software Foundation.
+ * This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License, version 2.0, as published by
+ * the Free Software Foundation.
  *
- * This program is also distributed with certain software (including but not
- * limited to OpenSSL) that is licensed under separate terms, as designated in a
- * particular file or component or in included license documentation. The
- * authors of MySQL hereby grant you an additional permission to link the
- * program and your derivative works with the separately licensed software that
- * they have included with MySQL.
+ * This program is designed to work with certain software that is licensed under separate terms, as designated in a particular file or component or in
+ * included license documentation. The authors of MySQL hereby grant you an additional permission to link the program and your derivative works with the
+ * separately licensed software that they have either included with the program or referenced in the documentation.
  *
- * Without limiting anything contained in the foregoing, this file, which is
- * part of MySQL Connector/J, is also subject to the Universal FOSS Exception,
- * version 1.0, a copy of which can be found at
- * http://oss.oracle.com/licenses/universal-foss-exception.
+ * Without limiting anything contained in the foregoing, this file, which is part of MySQL Connector/J, is also subject to the Universal FOSS Exception,
+ * version 1.0, a copy of which can be found at http://oss.oracle.com/licenses/universal-foss-exception.
  *
- * This program is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- * FOR A PARTICULAR PURPOSE. See the GNU General Public License, version 2.0,
- * for more details.
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License, version 2.0, for more details.
  *
- * You should have received a copy of the GNU General Public License along with
- * this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301  USA
+ * You should have received a copy of the GNU General Public License along with this program; if not, write to the Free Software Foundation, Inc.,
+ * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
 package testsuite.simple;
@@ -34,6 +25,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 import java.io.InputStream;
 import java.io.Reader;
@@ -70,6 +62,7 @@ import com.mysql.cj.conf.PropertyKey;
 import com.mysql.cj.exceptions.MysqlErrorNumbers;
 import com.mysql.cj.jdbc.ConnectionImpl;
 import com.mysql.cj.jdbc.exceptions.NotUpdatable;
+import com.mysql.cj.util.StringUtils;
 
 import testsuite.BaseTestCase;
 
@@ -1146,6 +1139,30 @@ public class ResultSetTest extends BaseTestCase {
             rsTmp.updateTimestamp("f1", null);
             return null;
         });
+    }
+
+    /**
+     * WL#16174: Support for VECTOR data type
+     *
+     * This test checks that the value of the VECTOR column is retrieved as a byte array by ResultSet.getObject() and that it can also be retrieved as BLOB by
+     * ResultSet.getBlob(). VECTOR support was added in MySQL 9.0.0.
+     *
+     * @throws Exception
+     */
+    @Test
+    public void testVectorResultSet() throws Exception {
+        assumeTrue(versionMeetsMinimum(9, 0), "MySQL 9.0.0+ is needed to run this test.");
+        createTable("testVectorResultSet", "(v VECTOR)");
+        // 0xC3F5484014AE0F41 is the HEX representation for the vector [3.14000e+00,8.98000e+00]
+        String vectorHexString = "C3F5484014AE0F41";
+        this.stmt.execute("INSERT INTO testVectorResultSet VALUES(0x" + vectorHexString + ")");
+        this.rs = this.stmt.executeQuery("SELECT v FROM testVectorResultSet");
+        this.rs.next();
+        byte[] vectorObject = this.rs.getObject(1, byte[].class);
+        Blob vectorBlob = this.rs.getBlob(1);
+        byte[] vectorBlobToBytes = vectorBlob.getBytes(1, (int) vectorBlob.length());
+        assertEquals(vectorHexString.toUpperCase(), StringUtils.toHexString(vectorObject, vectorObject.length).toUpperCase());
+        assertEquals(vectorHexString.toUpperCase(), StringUtils.toHexString(vectorBlobToBytes, vectorBlobToBytes.length).toUpperCase());
     }
 
 }

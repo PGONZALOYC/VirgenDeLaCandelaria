@@ -1,30 +1,21 @@
 /*
- * Copyright (c) 2002, 2023, Oracle and/or its affiliates.
+ * Copyright (c) 2002, 2024, Oracle and/or its affiliates.
  *
- * This program is free software; you can redistribute it and/or modify it under
- * the terms of the GNU General Public License, version 2.0, as published by the
- * Free Software Foundation.
+ * This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License, version 2.0, as published by
+ * the Free Software Foundation.
  *
- * This program is also distributed with certain software (including but not
- * limited to OpenSSL) that is licensed under separate terms, as designated in a
- * particular file or component or in included license documentation. The
- * authors of MySQL hereby grant you an additional permission to link the
- * program and your derivative works with the separately licensed software that
- * they have included with MySQL.
+ * This program is designed to work with certain software that is licensed under separate terms, as designated in a particular file or component or in
+ * included license documentation. The authors of MySQL hereby grant you an additional permission to link the program and your derivative works with the
+ * separately licensed software that they have either included with the program or referenced in the documentation.
  *
- * Without limiting anything contained in the foregoing, this file, which is
- * part of MySQL Connector/J, is also subject to the Universal FOSS Exception,
- * version 1.0, a copy of which can be found at
- * http://oss.oracle.com/licenses/universal-foss-exception.
+ * Without limiting anything contained in the foregoing, this file, which is part of MySQL Connector/J, is also subject to the Universal FOSS Exception,
+ * version 1.0, a copy of which can be found at http://oss.oracle.com/licenses/universal-foss-exception.
  *
- * This program is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- * FOR A PARTICULAR PURPOSE. See the GNU General Public License, version 2.0,
- * for more details.
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License, version 2.0, for more details.
  *
- * You should have received a copy of the GNU General Public License along with
- * this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301  USA
+ * You should have received a copy of the GNU General Public License along with this program; if not, write to the Free Software Foundation, Inc.,
+ * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
 package testsuite.simple;
@@ -216,7 +207,6 @@ public class StatementsTest extends BaseTestCase {
         sspsConn.close();
     }
 
-    @Test
     private void testBinaryResultSetNumericTypesInternal(Connection con) throws Exception {
         /*
          * TINYINT 1 -128 127 SMALLINT 2 -32768 32767 MEDIUMINT 3 -8388608
@@ -1482,7 +1472,7 @@ public class StatementsTest extends BaseTestCase {
         props.setProperty(PropertyKey.sslMode.getKeyName(), SslMode.DISABLED.name());
         props.setProperty(PropertyKey.allowPublicKeyRetrieval.getKeyName(), "true");
         props.setProperty(PropertyKey.useServerPrepStmts.getKeyName(), "false");
-        props.setProperty(PropertyKey.maxAllowedPacket.getKeyName(), "5660");
+        props.setProperty(PropertyKey.maxAllowedPacket.getKeyName(), "5725");
         props.setProperty(PropertyKey.rewriteBatchedStatements.getKeyName(), "true");
         Connection multiConn = null;
 
@@ -1508,9 +1498,8 @@ public class StatementsTest extends BaseTestCase {
                 this.pstmt.executeBatch();
             } catch (BatchUpdateException bUpE) {
                 int[] counts = bUpE.getUpdateCounts();
-
-                for (int i = 4059; i < counts.length; i++) {
-                    assertEquals(counts[i], Statement.EXECUTE_FAILED);
+                for (int i = 3555; i < counts.length; i++) {
+                    assertEquals(Statement.EXECUTE_FAILED, counts[i]);
                 }
 
                 // this depends on max_allowed_packet, only a sanity check
@@ -1523,9 +1512,8 @@ public class StatementsTest extends BaseTestCase {
                 multiStmt.executeBatch();
             } catch (BatchUpdateException bUpE) {
                 int[] counts = bUpE.getUpdateCounts();
-
-                for (int i = 4094; i < counts.length; i++) {
-                    assertEquals(counts[i], Statement.EXECUTE_FAILED);
+                for (int i = 4095; i < counts.length; i++) {
+                    assertEquals(Statement.EXECUTE_FAILED, counts[i]);
                 }
 
                 // this depends on max_allowed_packet, only a sanity check
@@ -1536,7 +1524,7 @@ public class StatementsTest extends BaseTestCase {
 
             createProcedure("sp_rewriteErrors", "(param1 INT)\nBEGIN\nINSERT INTO rewriteErrors VALUES (param1);\nEND");
 
-            CallableStatement cStmt = multiConn.prepareCall("{ CALL sp_rewriteErrors(?)}");
+            CallableStatement cStmt = multiConn.prepareCall("{ CALL sp_rewriteErrors(?) }");
 
             for (int i = 0; i < 4096; i++) {
                 cStmt.setInt(1, i);
@@ -1550,14 +1538,15 @@ public class StatementsTest extends BaseTestCase {
                 cStmt.executeBatch();
             } catch (BatchUpdateException bUpE) {
                 int[] counts = bUpE.getUpdateCounts();
-
-                for (int i = 4093; i < counts.length; i++) {
-                    assertEquals(counts[i], Statement.EXECUTE_FAILED);
+                for (int i = 3991; i < counts.length; i++) {
+                    assertEquals(Statement.EXECUTE_FAILED, counts[i]);
                 }
 
                 // this depends on max_allowed_packet, only a sanity check
                 assertTrue(getRowCount("rewriteErrors") >= 4000);
             }
+
+            this.stmt.execute("TRUNCATE TABLE rewriteErrors");
         }
     }
 

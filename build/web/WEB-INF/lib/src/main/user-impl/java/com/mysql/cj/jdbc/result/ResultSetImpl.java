@@ -1,30 +1,21 @@
 /*
- * Copyright (c) 2002, 2023, Oracle and/or its affiliates.
+ * Copyright (c) 2002, 2024, Oracle and/or its affiliates.
  *
- * This program is free software; you can redistribute it and/or modify it under
- * the terms of the GNU General Public License, version 2.0, as published by the
- * Free Software Foundation.
+ * This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License, version 2.0, as published by
+ * the Free Software Foundation.
  *
- * This program is also distributed with certain software (including but not
- * limited to OpenSSL) that is licensed under separate terms, as designated in a
- * particular file or component or in included license documentation. The
- * authors of MySQL hereby grant you an additional permission to link the
- * program and your derivative works with the separately licensed software that
- * they have included with MySQL.
+ * This program is designed to work with certain software that is licensed under separate terms, as designated in a particular file or component or in
+ * included license documentation. The authors of MySQL hereby grant you an additional permission to link the program and your derivative works with the
+ * separately licensed software that they have either included with the program or referenced in the documentation.
  *
- * Without limiting anything contained in the foregoing, this file, which is
- * part of MySQL Connector/J, is also subject to the Universal FOSS Exception,
- * version 1.0, a copy of which can be found at
- * http://oss.oracle.com/licenses/universal-foss-exception.
+ * Without limiting anything contained in the foregoing, this file, which is part of MySQL Connector/J, is also subject to the Universal FOSS Exception,
+ * version 1.0, a copy of which can be found at http://oss.oracle.com/licenses/universal-foss-exception.
  *
- * This program is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- * FOR A PARTICULAR PURPOSE. See the GNU General Public License, version 2.0,
- * for more details.
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License, version 2.0, for more details.
  *
- * You should have received a copy of the GNU General Public License along with
- * this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301  USA
+ * You should have received a copy of the GNU General Public License along with this program; if not, write to the Free Software Foundation, Inc.,
+ * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
 package com.mysql.cj.jdbc.result;
@@ -525,26 +516,27 @@ public class ResultSetImpl extends NativeResultset implements ResultSetInternalM
         checkClosed();
 
         if (!this.onValidRow) {
-            throw SQLError.createSQLException(this.invalidRowReason, MysqlErrorNumbers.SQL_STATE_GENERAL_ERROR, getExceptionInterceptor());
+            throw SQLError.createSQLException(Messages.getString(this.invalidRowReasonMessageKey), MysqlErrorNumbers.SQL_STATE_GENERAL_ERROR,
+                    getExceptionInterceptor());
         }
     }
 
     private boolean onValidRow = false;
-    private String invalidRowReason = null;
+    private String invalidRowReasonMessageKey = null;
 
-    private void setRowPositionValidity() throws SQLException {
+    private void setRowPositionValidity() {
         if (!this.rowData.isDynamic() && this.rowData.size() == 0) {
-            this.invalidRowReason = Messages.getString("ResultSet.Illegal_operation_on_empty_result_set");
+            this.invalidRowReasonMessageKey = "ResultSet.Illegal_operation_on_empty_result_set";
             this.onValidRow = false;
         } else if (this.rowData.isBeforeFirst()) {
-            this.invalidRowReason = Messages.getString("ResultSet.Before_start_of_result_set_146");
+            this.invalidRowReasonMessageKey = "ResultSet.Before_start_of_result_set_146";
             this.onValidRow = false;
         } else if (this.rowData.isAfterLast()) {
-            this.invalidRowReason = Messages.getString("ResultSet.After_end_of_result_set_148");
+            this.invalidRowReasonMessageKey = "ResultSet.After_end_of_result_set_148";
             this.onValidRow = false;
         } else {
             this.onValidRow = true;
-            this.invalidRowReason = null;
+            this.invalidRowReasonMessageKey = null;
         }
     }
 
@@ -1201,6 +1193,7 @@ public class ResultSetImpl extends NativeResultset implements ResultSetInternalM
             case MEDIUMBLOB:
             case LONGBLOB:
             case BLOB:
+            case VECTOR:
                 return getBytes(columnIndex);
 
             case YEAR:
@@ -1983,7 +1976,7 @@ public class ResultSetImpl extends NativeResultset implements ResultSetInternalM
     @Override
     public void setFetchSize(int rows) throws SQLException {
         synchronized (checkClosed().getConnectionMutex()) {
-            if (rows < 0) { /* || rows > getMaxRows() */
+            if (rows < 0 && rows != Integer.MIN_VALUE) { /* || rows > getMaxRows() */
                 throw SQLError.createSQLException(Messages.getString("ResultSet.Value_must_be_between_0_and_getMaxRows()_66"),
                         MysqlErrorNumbers.SQL_STATE_ILLEGAL_ARGUMENT, getExceptionInterceptor());
             }
