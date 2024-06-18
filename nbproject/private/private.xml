@@ -3,8 +3,15 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/C:/Users/levin/OneDrive/Escritorio/CURSOS%202024-1/CALIDAD%20DE%20SOFTW/VirgenDeLaCandelaria/VirgenDeLaCandelaria/src/java/utilidades/Conexion.java</file>
-            <file>file:/C:/Users/levin/OneDrive/Escritorio/CURSOS%202024-1/CALIDAD%20DE%20SOFTW/VirgenDeLaCandelaria/VirgenDeLaCandelaria/web/META-INF/context.xml</file>
+            <file>file:/C:/Users/Estudiante/Documents/Calidad%20VC/VirgenDeLaCandelaria/src/java/controller/GradoController.java</file>
+            <file>file:/C:/Users/Estudiante/Documents/Calidad%20VC/VirgenDeLaCandelaria/nbproject/build-impl.xml</file>
+            <file>file:/C:/Users/Estudiante/Documents/Calidad%20VC/VirgenDeLaCandelaria/test/model/EstudianteTest.java</file>
+            <file>file:/C:/Users/Estudiante/Documents/Calidad%20VC/VirgenDeLaCandelaria/src/java/controller/ApoderadoController.java</file>
+            <file>file:/C:/Users/Estudiante/Documents/Calidad%20VC/VirgenDeLaCandelaria/src/java/controller/EstudianteController.java</file>
+            <file>file:/C:/Users/Estudiante/Documents/Calidad%20VC/VirgenDeLaCandelaria/web/lista-pagos.jsp</file>
+            <file>file:/C:/Users/Estudiante/Documents/Calidad%20VC/VirgenDeLaCandelaria/test/model/ApoderadoTest.java</file>
+            <file>file:/C:/Users/Estudiante/Documents/Calidad%20VC/VirgenDeLaCandelaria/src/java/model/Estudiante.java</file>
+            <file>file:/C:/Users/Estudiante/Documents/Calidad%20VC/VirgenDeLaCandelaria/src/java/model/Apoderado.java</file>
         </group>
     </open-files>
 </project-private>

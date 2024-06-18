@@ -124,30 +124,30 @@ for (int i=1; i <= cant_paginas; i++){
                                 List<Apoderado>paginaActual=listaPaginas.get(pagina-1);%>
                                 <%for(Apoderado apoderado : paginaActual){ %>
                                 <tr>
-                                    <td><%=apoderado.getIdApoderado()%></td>
+                                    <td><%=apoderado.getId_Apoderado()%></td>
                                     <td><%=apoderado.getDni()%></td>
-                                    <td><%=apoderado.getApPaterno() %></td>
-                                    <td><%=apoderado.getApMaterno()%></td>
+                                    <td><%=apoderado.getApellido_Paterno() %></td>
+                                    <td><%=apoderado.getApellido_Materno()%></td>
                                     <td><%=apoderado.getNombres()%></td>
                                     <td>
-                                        <a onclick="document.getElementById('e_idEditar').value = '<%=apoderado.getIdApoderado()%>';
+                                        <a onclick="document.getElementById('e_idEditar').value = '<%=apoderado.getId_Apoderado()%>';
                                             document.getElementById('e_dniImput').value = '<%=apoderado.getDni()%>';
-                                            document.getElementById('e_estadoVidaImput').value = '<%=apoderado.getEstadoVida()%>';
-                                            document.getElementById('e_gradoInstruccionImput').value = '<%=apoderado.getGradoInstruccion()%>';
-                                            document.getElementById('e_ocupacionImput').value = '<%=apoderado.getOcupacion()%>';
+                                            document.getElementById('e_estadoVidaImput').value = '<%=apoderado.getVive()%>';
+                                            document.getElementById('e_gradoInstruccionImput').value = '<%=apoderado.getGrado_Instruccion()%>';
+                                            document.getElementById('e_ocupacionImput').value = '<%=apoderado.getOcupado()%>';
                                             document.getElementById('e_telefonoImput').value = '<%=apoderado.getTelefono()%>';
-                                            document.getElementById('e_apPaternoImput').value = '<%=apoderado.getApPaterno()%>';
-                                            document.getElementById('e_apMaternoImput').value = '<%=apoderado.getApMaterno()%>';
+                                            document.getElementById('e_apPaternoImput').value = '<%=apoderado.getApellido_Paterno()%>';
+                                            document.getElementById('e_apMaternoImput').value = '<%=apoderado.getApellido_Materno()%>';
                                             document.getElementById('e_nombresImput').value = '<%=apoderado.getNombres()%>';
                                             document.getElementById('e_direccionImput').value = '<%=apoderado.getDireccion()%>';
                                             document.getElementById('e_distritoImput').value = '<%=apoderado.getDistrito()%>';
                                             document.getElementById('e_departamentoImput').value = '<%=apoderado.getDepartamento()%>';
-                                           <%if (("Masculino").equals(apoderado.getGenero())) {
+                                           <%if (("Masculino").equals(apoderado.getSexo())) {
                                            %> document.getElementById('e_generoInput').value = 1;<%
-                                              } else if (("Femenino").equals(apoderado.getGenero())){
+                                              } else if (("Femenino").equals(apoderado.getSexo())){
                                            %>document.getElementById('e_generoInput').value = 2;<%
                                             }%>
-                                            document.getElementById('e_fecNacImput').value = '<%=apoderado.getFecha_Nac()%>';"
+                                            document.getElementById('e_fecNacImput').value = '<%=apoderado.getFecha_Nacimiento()%>';"
                                            class="icono-accion mx-1" href="#" data-bs-toggle="modal" data-bs-target="#modal-editar-datos-apo">
                                             <i class="fa-solid fa-pen-to-square fa-lg" style="color: #ffffff;"></i>      
                                         </a>      

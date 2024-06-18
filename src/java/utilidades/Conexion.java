@@ -12,8 +12,8 @@ public class Conexion {
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
             String usr = "root";
-            String psw = "";
-            String url = "jdbc:mysql://localhost:3307/virgen_de_la_candelaria";
+            String psw = "abc12345";
+            String url = "jdbc:mysql://localhost:3306/Virgen_de_la_Candelaria";
             cnx = DriverManager.getConnection(url,usr, psw);
             return cnx;
         } catch (SQLException e) {

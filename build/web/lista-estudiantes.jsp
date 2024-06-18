@@ -120,31 +120,31 @@ for (int i=1; i <= cant_paginas; i++){
                                     List<Estudiante> paginaActual = listaPaginas.get(pagina-1);%>
                                 <% for (Estudiante estudiante : paginaActual) { %>
                                 <tr>
-                                    <td><%= estudiante.getIdEstudiante() %></td>
+                                    <td><%= estudiante.getId_Estudiante() %></td>
                                     <td><%= estudiante.getDni() %></td>
-                                    <td><%= estudiante.getApPaterno() %></td>
-                                    <td><%= estudiante.getApMaterno() %></td>
+                                    <td><%= estudiante.getApellido_Paterno() %></td>
+                                    <td><%= estudiante.getApellido_Materno() %></td>
                                     <td><%= estudiante.getNombres() %></td>
                                     <td>
-                                        <a onclick="document.getElementById('e_idEditar').value = '<%=estudiante.getIdEstudiante()%>';
+                                        <a onclick="document.getElementById('e_idEditar').value = '<%=estudiante.getId_Estudiante()%>';
                                                 document.getElementById('e_dniInput').value = '<%=estudiante.getDni()%>';
-                                                document.getElementById('e_apPaternoInput').value = '<%=estudiante.getApPaterno()%>';
-                                                document.getElementById('e_apMaternoInput').value = '<%=estudiante.getApMaterno()%>';
+                                                document.getElementById('e_apPaternoInput').value = '<%=estudiante.getApellido_Paterno()%>';
+                                                document.getElementById('e_apMaternoInput').value = '<%=estudiante.getApellido_Materno()%>';
                                                 document.getElementById('e_nombresInput').value = '<%=estudiante.getNombres()%>';
                                                 document.getElementById('e_direccionInput').value = '<%=estudiante.getDireccion()%>';
                                                 document.getElementById('e_departamentoInput').value = '<%=estudiante.getDepartamento()%>';
                                                 document.getElementById('e_distritoInput').value = '<%=estudiante.getDistrito()%>';
-                                           <%if (("Masculino").equals(estudiante.getGenero())) {
+                                           <%if (("Masculino").equals(estudiante.getSexo())) {
                                            %> document.getElementById('e_generoInput').value = 1;<%
-                                              } else if (("Femenino").equals(estudiante.getGenero())){
+                                              } else if (("Femenino").equals(estudiante.getSexo())){
                                            %>document.getElementById('e_generoInput').value = 2;<%
                                             }%>
-                                                document.getElementById('e_fecNacInput').value = '<%=estudiante.getFecha_Nac()%>';
+                                                document.getElementById('e_fecNacInput').value = '<%=estudiante.getFecha_Nacimiento()%>';
                                            " class="icono-accion mx-1" href="#" data-bs-toggle="modal" data-bs-target="#modal-editar">
                                             <i class="fa-solid fa-pen-to-square fa-lg" style="color: #ffffff;"></i>      
                                         </a>
 
-                                        <a href="EstudianteController?accion=eliminar&id=<%= estudiante.getIdEstudiante() %>&page=<%= pagina%>" class="icono-accion mx-1" href="#">
+                                        <a href="EstudianteController?accion=eliminar&id=<%= estudiante.getId_Estudiante() %>&page=<%= pagina%>" class="icono-accion mx-1" href="#">
                                             <i class="fa-solid fa-file-lines fa-lg" style="color: #ffffff;"></i>
                                         </a>
                                     </td>

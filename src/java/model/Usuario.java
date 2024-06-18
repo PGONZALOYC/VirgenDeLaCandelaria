@@ -18,7 +18,7 @@ import utilidades.Conexion;
 public class Usuario {
     private Connection connection;
     
-    private String Id_Usuario;
+    private String id_Usuario;
     private String nombre;
     private String correo;
     private String contraseña;
@@ -33,9 +33,9 @@ public class Usuario {
         }
     }
 
-    public Usuario(Connection connection, String Id_Usuario, String nombre, String correo, String contraseña, String fecha_Ultima_Sesion) {
+    public Usuario(Connection connection, String id_Usuario, String nombre, String correo, String contraseña, String fecha_Ultima_Sesion) {
         this.connection = connection;
-        this.Id_Usuario = Id_Usuario;
+        this.id_Usuario = id_Usuario;
         this.nombre = nombre;
         this.correo = correo;
         this.contraseña = contraseña;
@@ -51,11 +51,11 @@ public class Usuario {
     }
 
     public String getId_Usuario() {
-        return Id_Usuario;
+        return id_Usuario;
     }
 
     public void setId_Usuario(String Id_Usuario) {
-        this.Id_Usuario = Id_Usuario;
+        this.id_Usuario = Id_Usuario;
     }
 
     public String getNombre() {

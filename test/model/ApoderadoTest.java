@@ -90,7 +90,7 @@ public class ApoderadoTest {
     @Test
     public void testEsNombresValido() {
         System.out.println("esNombresValido");
-        String nombres = "Coco-Hipólito";
+        String nombres = "Coco Hipólito";
         Apoderado instance = new Apoderado();
         boolean expResult = true;
         boolean result = instance.esNombresValido(nombres);

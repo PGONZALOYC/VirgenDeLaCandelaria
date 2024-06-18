@@ -185,8 +185,8 @@ for (int i=1; i <= cant_paginas; i++){
                                 <tr>
                                     <td><%= grado.getNivel()%></td>
                                     <td><%= grado.getGrado()%></td>
-                                    <td><%= grado.getVacOcupa()%></td>
-                                    <td><%= grado.getVacDisp()%></td>
+                                    <td><%= grado.getVacantes_Ocupadas()%></td>
+                                    <td><%= grado.getVacantes_Disponibles()%></td>
                                     <td><a class="icono-accion mx-1" href="#" data-bs-toggle="modal" data-bs-toggle="modal" data-bs-target="#modal-est" style="color:#ffffff">
                                             <i class="fa-solid fa-file-zipper"></i>
                                             Generar matrícula
@@ -366,7 +366,7 @@ for (int i=1; i <= cant_paginas; i++){
                                         <h6 class="label-info">Apellido Paterno:</h6>
                                         <h6 style="font-weight: normal" class="label-info"> <% 
                                                 if (imprimeEst){
-                                            %><%=estEncontrado.getApPaterno()%><%
+                                            %><%=estEncontrado.getApellido_Paterno()%><%
                                                    }
                                             %></h6>
                                     </div>
@@ -374,7 +374,7 @@ for (int i=1; i <= cant_paginas; i++){
                                         <h6 class="label-info">Apellido Materno:</h6>
                                         <h6 style="font-weight: normal" class="label-info"> <% 
                                                 if (imprimeEst){
-                                            %><%=estEncontrado.getApMaterno()%><%
+                                            %><%=estEncontrado.getApellido_Materno()%><%
                                                    }
                                             %></h6>
                                     </div>
@@ -390,7 +390,7 @@ for (int i=1; i <= cant_paginas; i++){
                                         <h6 class="label-info">Sexo:</h6>
                                         <h6 style="font-weight: normal" class="label-info"> <% 
                                                 if (imprimeEst){
-                                            %><%=estEncontrado.getGenero()%><%
+                                            %><%=estEncontrado.getSexo()%><%
                                                    }
                                             %></h6>
                                     </div>
@@ -438,7 +438,7 @@ for (int i=1; i <= cant_paginas; i++){
                                         <h6 class="label-info">Fecha de nacimiento:</h6>
                                         <h6 style="font-weight: normal" class="label-info"> <% 
                                                 if (imprimeEst){
-                                            %><%=estEncontrado.getFecha_Nac()%><%
+                                            %><%=estEncontrado.getFecha_Nacimiento()%><%
                                                    }
                                             %></h6>
                                     </div>
@@ -504,8 +504,8 @@ for (int i=1; i <= cant_paginas; i++){
                                                 %>
                                                 <tr>
                                                     <td><%=apoderadoRela.getDni()%></td>
-                                                    <td><%=apoderadoRela.getApPaterno() %></td>
-                                                    <td><%=apoderadoRela.getApMaterno() %></td>
+                                                    <td><%=apoderadoRela.getApellido_Paterno() %></td>
+                                                    <td><%=apoderadoRela.getApellido_Materno() %></td>
                                                     <td><%=apoderadoRela.getNombres()%></td>
                                                     <td><%=apoderadoRela.getDireccion()%></td>
                                                     <td>
